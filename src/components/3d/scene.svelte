@@ -2,6 +2,7 @@
   import { T, useTask } from "@threlte/core";
   import { interactivity } from "@threlte/extras";
   import { Spring } from "svelte/motion";
+  import { SCALE, MAX_DIMENSIONS_SUM_FOR_SCALE } from "./models/constants";
   import Box from "./models/box.svelte";
   interactivity();
 
@@ -11,6 +12,8 @@
   export let rotate = true;
 
   const scale = new Spring(1);
+  $: sumOfDimensions = width + height + depth;
+  $: canScale = sumOfDimensions < MAX_DIMENSIONS_SUM_FOR_SCALE;
 
   let rotation = 0;
   useTask((delta) => {
@@ -34,7 +37,9 @@
   position.y={1}
   scale={scale.current}
   onpointerenter={() => {
-    scale.target = 1.5;
+    if (canScale) {
+      scale.target = SCALE;
+    }
   }}
   onpointerleave={() => {
     scale.target = 1;

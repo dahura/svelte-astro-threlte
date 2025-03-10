@@ -11,20 +11,23 @@
   import { Settings, Plus, Minus } from "lucide-svelte";
   import { Canvas } from "@threlte/core";
   import Scene from "./scene.svelte";
-
+  import {
+    MIN_DIMENSION,
+    MAX_DIMENSION,
+    STEP,
+    DEFAULT_BOX_DIMENSIONS,
+  } from "./models/constants";
   let rotate = $state(true);
 
-  const dimensions = $state({
-    width: 2,
-    height: 2,
-    depth: 2,
-  });
-  const STEP = 0.1;
+  const dimensions = $state(DEFAULT_BOX_DIMENSIONS);
 
   type Property = keyof typeof dimensions;
 
   const clampValue = (value: number) =>
-    Math.max(0.1, Math.min(5, Math.round(value * 10) / 10));
+    Math.max(
+      MIN_DIMENSION,
+      Math.min(MAX_DIMENSION, Math.round(value * 10) / 10)
+    );
 
   const adjustDimension = (property: Property, delta: number) =>
     (dimensions[property] = clampValue(dimensions[property] + delta));
@@ -34,13 +37,22 @@
 
   const handleInputChange = (e: Event, property: Property) => {
     const value = parseFloat((e.target as HTMLInputElement).value);
+    preventValueOutOfBounds(e);
     if (!isNaN(value)) dimensions[property] = clampValue(value);
+  };
+
+  const preventValueOutOfBounds = (e: Event) => {
+    const value = parseFloat((e.target as HTMLInputElement).value);
+    if (value >= MAX_DIMENSION || value < MIN_DIMENSION) {
+      e.preventDefault();
+    }
   };
 
   const preventNonNumericInput = (e: KeyboardEvent) => {
     if (!/[0-9.]/.test(e.key) && e.key !== "Backspace" && e.key !== "Delete") {
       e.preventDefault();
     }
+    preventValueOutOfBounds(e);
   };
 </script>
 
@@ -70,15 +82,16 @@
                   size="icon"
                   class="rounded-r-none h-9 w-9"
                   on:click={() => decrement("width")}
+                  disabled={dimensions.width <= MIN_DIMENSION}
                 >
                   <Minus class="w-4 h-4" />
                 </Button>
                 <Input
                   id="width"
                   type="number"
-                  min="0.1"
-                  max="5"
-                  step="0.1"
+                  min={MIN_DIMENSION}
+                  max={MAX_DIMENSION}
+                  step={STEP}
                   value={dimensions.width}
                   on:input={(e) => handleInputChange(e, "width")}
                   on:keypress={preventNonNumericInput}
@@ -88,6 +101,7 @@
                   variant="outline"
                   size="icon"
                   class="rounded-l-none h-9 w-9"
+                  disabled={dimensions.width >= MAX_DIMENSION}
                   on:click={() => increment("width")}
                 >
                   <Plus class="w-4 h-4" />
@@ -104,15 +118,16 @@
                   size="icon"
                   class="rounded-r-none h-9 w-9"
                   on:click={() => decrement("height")}
+                  disabled={dimensions.height <= MIN_DIMENSION}
                 >
                   <Minus class="w-4 h-4" />
                 </Button>
                 <Input
                   id="height"
                   type="number"
-                  min="0.1"
-                  max="5"
-                  step="0.1"
+                  min={MIN_DIMENSION}
+                  max={MAX_DIMENSION}
+                  step={STEP}
                   value={dimensions.height}
                   on:input={(e) => handleInputChange(e, "height")}
                   on:keypress={preventNonNumericInput}
@@ -123,6 +138,7 @@
                   size="icon"
                   class="rounded-l-none h-9 w-9"
                   on:click={() => increment("height")}
+                  disabled={dimensions.height >= MAX_DIMENSION}
                 >
                   <Plus class="w-4 h-4" />
                 </Button>
@@ -138,15 +154,16 @@
                   size="icon"
                   class="rounded-r-none h-9 w-9"
                   on:click={() => decrement("depth")}
+                  disabled={dimensions.depth <= MIN_DIMENSION}
                 >
                   <Minus class="w-4 h-4" />
                 </Button>
                 <Input
                   id="depth"
                   type="number"
-                  min="0.1"
-                  max="5"
-                  step="0.1"
+                  min={MIN_DIMENSION}
+                  max={MAX_DIMENSION}
+                  step={STEP}
                   value={dimensions.depth}
                   on:input={(e) => handleInputChange(e, "depth")}
                   on:keypress={preventNonNumericInput}
@@ -156,6 +173,7 @@
                   variant="outline"
                   size="icon"
                   class="rounded-l-none h-9 w-9"
+                  disabled={dimensions.depth >= MAX_DIMENSION}
                   on:click={() => increment("depth")}
                 >
                   <Plus class="w-4 h-4" />
