@@ -1,13 +1,26 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"],
+  "exclude": ["dist", "node_modules/*"],
   "compilerOptions": {
-    // ... other options
     "baseUrl": ".",
     "paths": {
       "$lib/*": ["./src/lib/*"],
-      "$/*": ["./src/*"]
-    }
+      "$/*": ["./src/*"],
+      "@lib/*": ["src/*"],
+      "*": ["*", "*/index.ts"]
+    },
+    "strictNullChecks": true,
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "checkJs": false
   }
 }

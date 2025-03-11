@@ -1,36 +1,40 @@
-<script>
-  import { T, useTask } from "@threlte/core";
-  import { interactivity } from "@threlte/extras";
-  import { Spring } from "svelte/motion";
-  import { SCALE, MAX_DIMENSIONS_SUM_FOR_SCALE } from "./models/constants";
-  import Box from "./models/box.svelte";
-  interactivity();
+<script lang="ts">
+  import { T, useTask } from '@threlte/core'
+  import { interactivity, Suspense } from '@threlte/extras'
+  import { Spring } from 'svelte/motion'
+  import { SCALE, MAX_DIMENSIONS_SUM_FOR_SCALE } from './models/constants'
+  import Box from './models/box.svelte'
+  import { AerodynamicsWorkshopEnvironment } from './enviroments'
+  import { FullCabinet, CornerCabinet } from './models'
 
-  export let width = 1;
-  export let height = 2;
-  export let depth = 1;
-  export let rotate = true;
+  interactivity()
 
-  const scale = new Spring(1);
-  $: sumOfDimensions = width + height + depth;
-  $: canScale = sumOfDimensions < MAX_DIMENSIONS_SUM_FOR_SCALE;
+  export let width = 1
+  export let height = 2
+  export let depth = 1
+  export let rotate = true
 
-  let rotation = 0;
+  const scale = new Spring(1)
+  $: sumOfDimensions = width + height + depth
+  $: canScale = sumOfDimensions < MAX_DIMENSIONS_SUM_FOR_SCALE
+
+  let rotation = 0
   useTask((delta) => {
     if (rotate) {
-      rotation += delta;
+      rotation += delta
     }
-  });
+  })
 </script>
 
 <T.PerspectiveCamera
   makeDefault
-  position={[10, 10, 10]}
+  position={[100, 150, 200]}
   oncreate={(ref) => {
-    ref.lookAt(0, 1, 0);
+    ref.lookAt(0, 0, 0)
   }}
 />
-<T.DirectionalLight position={[0, 10, 10]} />
+<T.DirectionalLight position={[50, 100, 100]} intensity={0.8} />
+<T.DirectionalLight position={[-50, -100, -100]} intensity={0.5} />
 
 <T.Mesh
   rotation.y={rotation}
@@ -38,13 +42,22 @@
   scale={scale.current}
   onpointerenter={() => {
     if (canScale) {
-      scale.target = SCALE;
+      scale.target = SCALE
     }
   }}
   onpointerleave={() => {
-    scale.target = 1;
+    scale.target = 1
   }}
 >
-  <Box {width} {height} {depth} />
-  <T.MeshStandardMaterial color="hotpink" />
+  <FullCabinet />
+  <!-- <CornerCabinet /> -->
+
+  <!-- <T.MeshStandardMaterial color="hotpink" /> -->
+  <Suspense>
+    {#snippet fallback()}
+      <div class="w-full h-full bg-black">loading...</div>
+    {/snippet}
+    <!-- <Environment url="/hdr/aerodynamics_workshop_1k.hdr" /> -->
+    <AerodynamicsWorkshopEnvironment />
+  </Suspense>
 </T.Mesh>

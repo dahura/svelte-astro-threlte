@@ -3,57 +3,49 @@
     Accordion,
     AccordionContent,
     AccordionItem,
-    AccordionTrigger,
-  } from "$lib/components/ui/accordion";
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
-  import { Card, CardContent } from "$lib/components/ui/card";
-  import { Settings, Plus, Minus } from "lucide-svelte";
-  import { Canvas } from "@threlte/core";
-  import Scene from "./scene.svelte";
-  import {
-    MIN_DIMENSION,
-    MAX_DIMENSION,
-    STEP,
-    DEFAULT_BOX_DIMENSIONS,
-  } from "./models/constants";
-  let rotate = $state(true);
+    AccordionTrigger
+  } from '$lib/components/ui/accordion'
+  import { Button } from '$lib/components/ui/button'
+  import { Input } from '$lib/components/ui/input'
+  import { Card, CardContent } from '$lib/components/ui/card'
+  import { Settings, Plus, Minus } from 'lucide-svelte'
+  import { Canvas } from '@threlte/core'
+  import Scene from './scene.svelte'
+  import { MIN_DIMENSION, MAX_DIMENSION, STEP, DEFAULT_BOX_DIMENSIONS } from './models/constants'
+  let rotate = $state(false)
 
-  const dimensions = $state(DEFAULT_BOX_DIMENSIONS);
+  const dimensions = $state(DEFAULT_BOX_DIMENSIONS)
 
-  type Property = keyof typeof dimensions;
+  type Property = keyof typeof dimensions
 
   const clampValue = (value: number) =>
-    Math.max(
-      MIN_DIMENSION,
-      Math.min(MAX_DIMENSION, Math.round(value * 10) / 10)
-    );
+    Math.max(MIN_DIMENSION, Math.min(MAX_DIMENSION, Math.round(value * 10) / 10))
 
   const adjustDimension = (property: Property, delta: number) =>
-    (dimensions[property] = clampValue(dimensions[property] + delta));
+    (dimensions[property] = clampValue(dimensions[property] + delta))
 
-  const increment = (property: Property) => adjustDimension(property, STEP);
-  const decrement = (property: Property) => adjustDimension(property, -STEP);
+  const increment = (property: Property) => adjustDimension(property, STEP)
+  const decrement = (property: Property) => adjustDimension(property, -STEP)
 
   const handleInputChange = (e: Event, property: Property) => {
-    const value = parseFloat((e.target as HTMLInputElement).value);
-    preventValueOutOfBounds(e);
-    if (!isNaN(value)) dimensions[property] = clampValue(value);
-  };
+    const value = parseFloat((e.target as HTMLInputElement).value)
+    preventValueOutOfBounds(e)
+    if (!isNaN(value)) dimensions[property] = clampValue(value)
+  }
 
   const preventValueOutOfBounds = (e: Event) => {
-    const value = parseFloat((e.target as HTMLInputElement).value);
+    const value = parseFloat((e.target as HTMLInputElement).value)
     if (value >= MAX_DIMENSION || value < MIN_DIMENSION) {
-      e.preventDefault();
+      e.preventDefault()
     }
-  };
+  }
 
   const preventNonNumericInput = (e: KeyboardEvent) => {
-    if (!/[0-9.]/.test(e.key) && e.key !== "Backspace" && e.key !== "Delete") {
-      e.preventDefault();
+    if (!/[0-9.]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
+      e.preventDefault()
     }
-    preventValueOutOfBounds(e);
-  };
+    preventValueOutOfBounds(e)
+  }
 </script>
 
 <div class="flex flex-row h-screen bg-background text-foreground">
@@ -81,7 +73,7 @@
                   variant="outline"
                   size="icon"
                   class="rounded-r-none h-9 w-9"
-                  on:click={() => decrement("width")}
+                  on:click={() => decrement('width')}
                   disabled={dimensions.width <= MIN_DIMENSION}
                 >
                   <Minus class="w-4 h-4" />
@@ -93,7 +85,7 @@
                   max={MAX_DIMENSION}
                   step={STEP}
                   value={dimensions.width}
-                  on:input={(e) => handleInputChange(e, "width")}
+                  on:input={(e) => handleInputChange(e, 'width')}
                   on:keypress={preventNonNumericInput}
                   class="h-9 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
@@ -102,7 +94,7 @@
                   size="icon"
                   class="rounded-l-none h-9 w-9"
                   disabled={dimensions.width >= MAX_DIMENSION}
-                  on:click={() => increment("width")}
+                  on:click={() => increment('width')}
                 >
                   <Plus class="w-4 h-4" />
                 </Button>
@@ -117,7 +109,7 @@
                   variant="outline"
                   size="icon"
                   class="rounded-r-none h-9 w-9"
-                  on:click={() => decrement("height")}
+                  on:click={() => decrement('height')}
                   disabled={dimensions.height <= MIN_DIMENSION}
                 >
                   <Minus class="w-4 h-4" />
@@ -129,7 +121,7 @@
                   max={MAX_DIMENSION}
                   step={STEP}
                   value={dimensions.height}
-                  on:input={(e) => handleInputChange(e, "height")}
+                  on:input={(e) => handleInputChange(e, 'height')}
                   on:keypress={preventNonNumericInput}
                   class="h-9 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
@@ -137,7 +129,7 @@
                   variant="outline"
                   size="icon"
                   class="rounded-l-none h-9 w-9"
-                  on:click={() => increment("height")}
+                  on:click={() => increment('height')}
                   disabled={dimensions.height >= MAX_DIMENSION}
                 >
                   <Plus class="w-4 h-4" />
@@ -153,7 +145,7 @@
                   variant="outline"
                   size="icon"
                   class="rounded-r-none h-9 w-9"
-                  on:click={() => decrement("depth")}
+                  on:click={() => decrement('depth')}
                   disabled={dimensions.depth <= MIN_DIMENSION}
                 >
                   <Minus class="w-4 h-4" />
@@ -165,7 +157,7 @@
                   max={MAX_DIMENSION}
                   step={STEP}
                   value={dimensions.depth}
-                  on:input={(e) => handleInputChange(e, "depth")}
+                  on:input={(e) => handleInputChange(e, 'depth')}
                   on:keypress={preventNonNumericInput}
                   class="h-9 rounded-none text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
@@ -174,7 +166,7 @@
                   size="icon"
                   class="rounded-l-none h-9 w-9"
                   disabled={dimensions.depth >= MAX_DIMENSION}
-                  on:click={() => increment("depth")}
+                  on:click={() => increment('depth')}
                 >
                   <Plus class="w-4 h-4" />
                 </Button>
@@ -195,10 +187,8 @@
                   <span class="font-medium">{dimensions.width.toFixed(1)}</span>
                 </div>
                 <div class="p-2 rounded bg-muted">
-                  <span class="block text-xs text-muted-foreground">Height</span
-                  >
-                  <span class="font-medium">{dimensions.height.toFixed(1)}</span
-                  >
+                  <span class="block text-xs text-muted-foreground">Height</span>
+                  <span class="font-medium">{dimensions.height.toFixed(1)}</span>
                 </div>
                 <div class="p-2 rounded bg-muted">
                   <span class="block text-xs text-muted-foreground">Depth</span>
@@ -215,15 +205,10 @@
         <AccordionContent>
           <div class="space-y-4">
             <p class="text-sm text-muted-foreground">
-              The 3D model will {rotate ? "continuously rotate" : "stay still"} to
-              showcase all dimensions.
+              The 3D model will {rotate ? 'continuously rotate' : 'stay still'} to showcase all dimensions.
             </p>
-            <Button
-              variant="outline"
-              class="w-full"
-              on:click={() => (rotate = !rotate)}
-            >
-              {rotate ? "Stop Rotation" : "Start Rotation"}
+            <Button variant="outline" class="w-full" on:click={() => (rotate = !rotate)}>
+              {rotate ? 'Stop Rotation' : 'Start Rotation'}
             </Button>
           </div>
         </AccordionContent>
