@@ -1,7 +1,20 @@
 <script lang="ts">
-  import { T } from '@threlte/core'
-  import { writable } from 'svelte/store'
+  import { Tween } from 'svelte/motion'
   import type { BaseCabinet } from './types'
+  import * as THREE from 'three'
+  import { T } from '@threlte/core'
+  type Event = THREE.Intersection & {
+    intersections: THREE.Intersection[]
+    object: THREE.Object3D
+    eventObject: THREE.Object3D
+    camera: THREE.Camera
+    delta: THREE.Vector2
+    nativeEvent: PointerEvent
+    pointer: THREE.Vector2
+    ray: THREE.Ray
+    stopPropagation: () => void
+    stopped: boolean
+  }
 
   const {
     width = 120,
@@ -17,51 +30,78 @@
   const shelfHeight = height / (shelves + 1)
   const doorWidth = width / 2 - 1
 
-  // Door rotation states with writable for interactive control
-  const leftDoorRotation = writable(0)
-  const rightDoorRotation = writable(0)
+  const leftDoorRotation = new Tween(0)
+  const rightDoorRotation = new Tween(0)
   const MAX_ROTATION = Math.PI / 2 // 90 degrees
 
-  let isDraggingLeft = false
-  let isDraggingRight = false
+  let isLeftDoorOpen = false
+  let isRightDoorOpen = false
+  let isDragging = false
   let startX = 0
+  let startY = 0
+  let activeDoor: 'left' | 'right' | null = null // Отслеживаем, какая дверь активна
+  let dragArea = { x: 0, y: 0, width: 0, height: 0 } // Область захвата
 
-  function onMouseDown(event: MouseEvent, isLeftDoor: boolean) {
-    startX = event.clientX
-    if (isLeftDoor) {
-      isDraggingLeft = true
-    } else {
-      isDraggingRight = true
+  // Проверка на удержание левой кнопки мыши
+  function isLeftMouseButtonDown(event: PointerEvent): boolean {
+    return event.buttons === 1 // Проверка, если левая кнопка мыши зажата
+  }
+
+  function toggleLeftDoor() {
+    isLeftDoorOpen = !isLeftDoorOpen
+    leftDoorRotation.set(isLeftDoorOpen ? -MAX_ROTATION : 0)
+  }
+
+  function toggleRightDoor() {
+    isRightDoorOpen = !isRightDoorOpen
+    rightDoorRotation.set(isRightDoorOpen ? MAX_ROTATION : 0)
+  }
+
+  function startDrag(event: Event, door: 'left' | 'right') {
+    if (activeDoor) return // Если уже какая-то дверь двигается, не начинаем новую перетаскивание
+
+    if (!isLeftMouseButtonDown(event.nativeEvent)) return // Дверь двигается только если левая кнопка мыши зажата
+
+    activeDoor = door // Устанавливаем активную дверь
+    isDragging = true
+    startX = event.pointer.x
+    startY = event.pointer.y
+
+    // Устанавливаем область захвата (за дверью)
+    dragArea = {
+      x: event.pointer.x - startX,
+      y: event.pointer.y - startY,
+      width: doorWidth,
+      height: height
     }
   }
 
-  function onMouseMove(event: MouseEvent) {
-    if (isDraggingLeft || isDraggingRight) {
-      const deltaX = event.clientX - startX
-      const rotationChange = (deltaX / 100) * MAX_ROTATION // Adjust sensitivity as needed
+  function dragLeftDoor(event: Event) {
+    if (!isDragging || activeDoor !== 'left') return
+    if (!isLeftMouseButtonDown(event.nativeEvent)) return // Проверяем, зажата ли левая кнопка мыши
 
-      if (isDraggingLeft) {
-        leftDoorRotation.update((current) =>
-          Math.max(0, Math.min(MAX_ROTATION, current + rotationChange))
-        )
-      } else if (isDraggingRight) {
-        rightDoorRotation.update((current) =>
-          Math.max(-MAX_ROTATION, Math.min(0, current + rotationChange))
-        )
-      }
+    const deltaX = event.pointer.x - startX
+    const deltaY = event.pointer.y - startY
 
-      startX = event.clientX
-    }
+    // Отслеживаем положение двери относительно области захвата
+    leftDoorRotation.set(leftDoorRotation.current + (deltaY - dragArea.y) / 0.5)
   }
 
-  function onMouseUp() {
-    isDraggingLeft = false
-    isDraggingRight = false
+  function dragRightDoor(event: Event) {
+    if (!isDragging || activeDoor !== 'right') return
+    if (!isLeftMouseButtonDown(event.nativeEvent)) return // Проверяем, зажата ли левая кнопка мыши
+
+    const deltaX = event.pointer.x - startX
+    const deltaY = event.pointer.y - startY
+
+    // Отслеживаем положение двери относительно области захвата
+    rightDoorRotation.set(rightDoorRotation.current + (deltaY - dragArea.y) / 0.5)
   }
 
-  // Add event listeners for mouse move and up
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('mouseup', onMouseUp)
+  function endDrag() {
+    isDragging = false
+    activeDoor = null // Завершаем перетаскивание и сбрасываем активную дверь
+  }
 </script>
 
 <T.Group {position}>
@@ -104,8 +144,14 @@
   {/each}
 
   <!-- Левая дверь -->
-  <T.Group position={[-width / 2 + 1, 0, depth / 2]} rotation.y={$leftDoorRotation}>
-    <T.Mesh position={[doorWidth / 2, 0, 0]} on:mousedown={(e) => onMouseDown(e, true)}>
+  <T.Group position={[-width / 2 + 1, 0, depth / 2]} rotation.y={leftDoorRotation.current}>
+    <T.Mesh
+      position={[doorWidth / 2, 0, 0]}
+      onpointerdown={(event: Event) => startDrag(event, 'left')}
+      onpointermove={dragLeftDoor}
+      onpointerup={endDrag}
+      onpointercancel={endDrag}
+    >
       <T.BoxGeometry args={[doorWidth, height - 2, 2]} />
       <T.MeshStandardMaterial color={doorColor} />
 
@@ -118,8 +164,14 @@
   </T.Group>
 
   <!-- Правая дверь -->
-  <T.Group position={[width / 2 - 1, 0, depth / 2]} rotation.y={$rightDoorRotation}>
-    <T.Mesh position={[-doorWidth / 2, 0, 0]} on:mousedown={(e) => onMouseDown(e, false)}>
+  <T.Group position={[width / 2 - 1, 0, depth / 2]} rotation.y={rightDoorRotation.current}>
+    <T.Mesh
+      position={[-doorWidth / 2, 0, 0]}
+      onpointerdown={(event: Event) => startDrag(event, 'right')}
+      onpointermove={dragRightDoor}
+      onpointerup={endDrag}
+      onpointercancel={endDrag}
+    >
       <T.BoxGeometry args={[doorWidth, height - 2, 2]} />
       <T.MeshStandardMaterial color={doorColor} />
 
@@ -131,9 +183,3 @@
     </T.Mesh>
   </T.Group>
 </T.Group>
-
-<style>
-  :global(canvas) {
-    cursor: pointer;
-  }
-</style>
