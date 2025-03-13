@@ -1,0 +1,12 @@
+---
+import RootLayout from "$/layouts/root-layout.astro";
+import {default as CabinetScene} from "$/components/3d/cabinet-scene.svelte";
+import { MODULE_1_CABINETS, createScene } from "$/components/3d/modules/module-1";
+import type { UpperCabinet } from "$/components/3d/types";
+import { ModelsList } from "./components";
+---
+
+<RootLayout>
+  <h1>Available Models</h1>
+  <ModelsList client:visible />
+</RootLayout>

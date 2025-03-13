@@ -1,0 +1,85 @@
+<script lang="ts">
+  import { T, useTask } from '@threlte/core'
+  import { interactivity, Suspense } from '@threlte/extras'
+  import { Spring } from 'svelte/motion'
+  import { default as RenderCabinet } from './render-cabinet.svelte'
+  import { AerodynamicsWorkshopEnvironment } from './enviroments'
+  import type { Scene, Model } from './types'
+
+  interactivity()
+
+  const { sceneConfig, cabinet }: { sceneConfig: Scene; cabinet: Model } = $props()
+
+  let rotation = $state(0)
+  let scale = new Spring(sceneConfig.modelSettings.useScale || 1)
+  let elapsedTime = $state(0)
+
+  function checkScale() {
+    return sceneConfig.modelSettings.scaleUntil
+      ? sceneConfig.modelSettings.scaleUntil({
+          currentScale: scale.current,
+          elapsedTime,
+          initialScale: 1,
+          currentRotation: { x: 0, y: rotation, z: 0 },
+          cabinet
+        })
+      : false
+  }
+
+  useTask((delta) => {
+    elapsedTime += delta
+    if (sceneConfig.modelSettings.rotateModelByDefault) {
+      if (
+        !sceneConfig.modelSettings.rotateUntil ||
+        sceneConfig.modelSettings.rotateUntil({
+          currentScale: scale.current,
+          elapsedTime,
+          initialScale: 1,
+          currentRotation: { x: 0, y: rotation, z: 0 },
+          cabinet
+        })
+      ) {
+        rotation += delta
+      }
+    }
+  })
+</script>
+
+<T.PerspectiveCamera
+  makeDefault
+  position={[
+    sceneConfig.cameraPosition.x,
+    sceneConfig.cameraPosition.y,
+    sceneConfig.cameraPosition.z
+  ]}
+  oncreate={(ref) => ref.lookAt(0, 0, 0)}
+/>
+<T.DirectionalLight
+  position={[
+    sceneConfig.light.position.x,
+    sceneConfig.light.position.y,
+    sceneConfig.light.position.z
+  ]}
+  intensity={0.8}
+/>
+
+<T.Mesh
+  rotation.y={rotation}
+  scale={scale.current}
+  onpointerenter={() => {
+    if (sceneConfig.modelSettings.scaleOnHover && checkScale()) {
+      scale.target = sceneConfig.modelSettings.useScale || 1.2
+    }
+  }}
+  onpointerleave={() => {
+    scale.target = 1
+  }}
+>
+  <Suspense>
+    {#snippet fallback()}
+      <div class="w-full h-full bg-black">loading...</div>
+    {/snippet}
+    <RenderCabinet {cabinet} />
+    <AerodynamicsWorkshopEnvironment />
+  </Suspense>
+</T.Mesh>

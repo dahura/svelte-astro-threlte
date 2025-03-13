@@ -10,7 +10,10 @@
   import { Card, CardContent } from '$lib/components/ui/card'
   import { Settings, Plus, Minus } from 'lucide-svelte'
   import { Canvas } from '@threlte/core'
-  import Scene from './scene.svelte'
+  import { default as CabinetScene } from './cabinet-scene.svelte'
+  import { createScene, MODULE_1_CABINETS } from './modules/module-1'
+  import type { UpperCabinet } from './types'
+
   import { MIN_DIMENSION, MAX_DIMENSION, STEP, DEFAULT_BOX_DIMENSIONS } from './models/constants'
   let rotate = $state(false)
 
@@ -51,7 +54,24 @@
 <div class="flex flex-row h-screen bg-background text-foreground">
   <div class="relative flex-1">
     <Canvas>
-      <Scene {...dimensions} {rotate} />
+      <CabinetScene
+        sceneConfig={createScene<UpperCabinet>({
+          cameraPosition: {
+            x: MODULE_1_CABINETS.upper.width,
+            y: MODULE_1_CABINETS.upper.height,
+            z: MODULE_1_CABINETS.upper.depth * 5
+          },
+          light: {
+            type: 'direct',
+            position: {
+              x: MODULE_1_CABINETS.upper.width,
+              y: MODULE_1_CABINETS.upper.height,
+              z: MODULE_1_CABINETS.upper.depth
+            }
+          }
+        })}
+        cabinet={MODULE_1_CABINETS.upper}
+      />
     </Canvas>
   </div>
   <div class="px-4 py-6 border-l w-80 border-border bg-card">

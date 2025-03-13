@@ -28,13 +28,13 @@
 
 <T.PerspectiveCamera
   makeDefault
-  position={[100, 150, 200]}
+  position={[60, 150, 200]}
   oncreate={(ref) => {
     ref.lookAt(0, 0, 0)
   }}
 />
-<T.DirectionalLight position={[50, 100, 100]} intensity={0.8} />
-<T.DirectionalLight position={[-50, -100, -100]} intensity={0.5} />
+<T.DirectionalLight position={[60, 150, 200]} intensity={0.8} />
+<T.DirectionalLight position={[-60, -150, -200]} intensity={0.5} />
 
 <T.Mesh
   rotation.y={rotation}
