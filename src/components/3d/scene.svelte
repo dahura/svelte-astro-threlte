@@ -5,7 +5,7 @@
   import { SCALE, MAX_DIMENSIONS_SUM_FOR_SCALE } from './models/constants'
   import Box from './models/box.svelte'
   import { AerodynamicsWorkshopEnvironment } from './enviroments'
-  import { FullCabinet, CornerCabinet } from './models'
+  import { CornerCabinet } from './models'
 
   interactivity()
 
@@ -28,7 +28,7 @@
 
 <T.PerspectiveCamera
   makeDefault
-  position={[60, 150, 200]}
+  position={[0, 0, 0]}
   oncreate={(ref) => {
     ref.lookAt(0, 0, 0)
   }}
@@ -49,7 +49,6 @@
     scale.target = 1
   }}
 >
-  <FullCabinet />
   <!-- <CornerCabinet /> -->
 
   <!-- <T.MeshStandardMaterial color="hotpink" /> -->

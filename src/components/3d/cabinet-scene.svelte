@@ -4,13 +4,13 @@
   import { Spring } from 'svelte/motion'
   import { default as RenderCabinet } from './render-cabinet.svelte'
   import { AerodynamicsWorkshopEnvironment } from './enviroments'
-  import type { Scene, Model } from './types'
+  import type { Scene, BaseCabinet } from './types'
 
   interactivity()
 
-  const { sceneConfig, cabinet }: { sceneConfig: Scene; cabinet: Model } = $props()
+  const { sceneConfig, cabinet }: { sceneConfig: Scene; cabinet: BaseCabinet } = $props()
 
-  let rotation = $state(0)
+  let rotation = $state(0) // Set rotation to 0 to look directly at the user
   let scale = new Spring(sceneConfig.modelSettings.useScale || 1)
   let elapsedTime = $state(0)
 
@@ -54,17 +54,32 @@
   ]}
   oncreate={(ref) => ref.lookAt(0, 0, 0)}
 />
-<T.DirectionalLight
-  position={[
-    sceneConfig.light.position.x,
-    sceneConfig.light.position.y,
-    sceneConfig.light.position.z
-  ]}
-  intensity={0.8}
-/>
+{#if sceneConfig.light.type === 'direct'}
+  <T.DirectionalLight
+    position={[
+      sceneConfig.light.position.x,
+      sceneConfig.light.position.y,
+      sceneConfig.light.position.z
+    ]}
+  />
+{/if}
+
+{#if sceneConfig.light.type === 'point'}
+  <T.PointLight
+    position={[
+      sceneConfig.light.position.x,
+      sceneConfig.light.position.y,
+      sceneConfig.light.position.z
+    ]}
+    intensity={1}
+    distance={100}
+    decay={2}
+  />
+{/if}
 
 <T.Mesh
-  rotation.y={rotation}
+  rotation.y={0}
+  rotation.x={0}
   scale={scale.current}
   onpointerenter={() => {
     if (sceneConfig.modelSettings.scaleOnHover && checkScale()) {

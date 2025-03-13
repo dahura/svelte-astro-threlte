@@ -4,25 +4,17 @@
     UpperCabinet as UpperCabinetType,
     LowerCabinet as LowerCabinetType,
     CornerCabinet as CornerCabinetType,
-    Model
+    Model,
+    BaseCabinet
   } from './types'
   import { CornerCabinet, UpperCabinet } from './models'
-  export let cabinet: UpperCabinetType | LowerCabinetType | CornerCabinetType
+  export let cabinet: UpperCabinetType | LowerCabinetType | CornerCabinetType | BaseCabinet
 </script>
 
 {#if cabinet.type === 'upper'}
   <UpperCabinet {...cabinet} />
 {:else if cabinet.type === 'lower'}
-  <T.Box args={[cabinet.width, cabinet.height, cabinet.depth]}>
-    {#if cabinet.doors}
-      <T.MeshBasicMaterial color="brown" />
-    {/if}
-    {#if cabinet.legs}
-      <T.MeshBasicMaterial color="gray" /> <!-- Ножки -->
-    {/if}
-
-    <!-- Другие элементы для нижнего шкафа -->
-  </T.Box>
+  <!-- Logic for lower cabinet -->
 {:else if cabinet.type === 'corner'}
-  <CornerCabinet {...cabinet} />
+  <!-- Logic for corner cabinet -->
 {/if}

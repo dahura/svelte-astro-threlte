@@ -55,7 +55,7 @@
   <div class="relative flex-1">
     <Canvas>
       <CabinetScene
-        sceneConfig={createScene<UpperCabinet>({
+        sceneConfig={createScene<any>(MODULE_1_CABINETS.upper, {
           cameraPosition: {
             x: MODULE_1_CABINETS.upper.width,
             y: MODULE_1_CABINETS.upper.height,
