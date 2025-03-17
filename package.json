@@ -22,7 +22,7 @@
     "autoprefixer": "^10.4.21",
     "bits-ui": "0.22.0",
     "clsx": "^2.1.1",
-    "lucide-svelte": "^0.479.0",
+    "lucide-svelte": "^0.482.0",
     "postcss": "^8.5.3",
     "tailwind-merge": "^3.0.2",
     "tailwind-variants": "^1.0.0",

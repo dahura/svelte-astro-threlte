@@ -1,6 +1,5 @@
-type SoundName = string; // You can make this more specific if you prefer, e.g., 'doorOpen' | 'doorClose'
+type SoundName = string;
 
-// A class to manage sounds dynamically
 class Sound {
   private static instance: Sound;
   private sounds: Map<SoundName, HTMLAudioElement>;
@@ -9,7 +8,7 @@ class Sound {
     this.sounds = new Map();
   }
 
-  // Singleton pattern to ensure only one instance of Sound
+ 
   public static getInstance(): Sound {
     if (!Sound.instance) {
       Sound.instance = new Sound();
@@ -17,7 +16,7 @@ class Sound {
     return Sound.instance;
   }
 
-  // Dynamically load a sound by name and URL
+ 
   public loadSound<K extends SoundName>(name: K, url: string): void {
     if (this.sounds.has(name)) {
       console.warn(`Sound "${name}" is already loaded.`);
@@ -31,18 +30,17 @@ class Sound {
     }
   }
 
-  // Play the sound by its name with type safety
+  
   public playSound<K extends SoundName>(name: K): void {
     const sound = this.sounds.get(name);
     if (sound) {
-      sound.currentTime = 0; // Start from the beginning
+      sound.currentTime = 0; 
       sound.play();
     } else {
       console.warn(`Sound "${name}" is not loaded.`);
     }
   }
 
-  // Stop a sound by name (if needed)
   public stopSound<K extends SoundName>(name: K): void {
     const sound = this.sounds.get(name);
     if (sound) {
@@ -51,7 +49,7 @@ class Sound {
     }
   }
 
-  // Stop all sounds
+
   public stopAllSounds(): void {
     this.sounds.forEach(sound => {
       sound.pause();

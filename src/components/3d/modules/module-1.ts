@@ -45,7 +45,7 @@ export var MODULE_1_CABINETS = {
 
 
 export var cabinets: BaseCabinet[] = [
-    { name: "ШВ 300", width: 720, height: 300, depth: 320, type: "upper", position: [0, 0, 0], doors: true, shelves: 2 },
+    { name: "ШВ 300", width: 720, height: 300, depth: 320, type: "upper", position: [0, 150, 0], doors: false, shelves: 2, },
     { name: "ШВ 400", width: 720, height: 400, depth: 320, type: "upper" },
     { name: "ШВ 500", width: 720, height: 500, depth: 320, type: "upper" },
     { name: "ШВ 600", width: 720, height: 600, depth: 320, type: "upper" },

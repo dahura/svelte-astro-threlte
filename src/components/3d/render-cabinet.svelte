@@ -7,12 +7,13 @@
     Model,
     BaseCabinet
   } from './types'
-  import { CornerCabinet, UpperCabinet } from './models'
+  import { CornerCabinet, UpperCabinet, DrawerCabinet } from './models'
   export let cabinet: UpperCabinetType | LowerCabinetType | CornerCabinetType | BaseCabinet
 </script>
 
 {#if cabinet.type === 'upper'}
-  <UpperCabinet {...cabinet} />
+  <!-- <UpperCabinet {...cabinet} /> -->
+  <DrawerCabinet {...cabinet} />
 {:else if cabinet.type === 'lower'}
   <!-- Logic for lower cabinet -->
 {:else if cabinet.type === 'corner'}
