@@ -1,8 +1,8 @@
 <script lang="ts">
   import { T } from '@threlte/core'
-  import { Environment, Gizmo, interactivity, OrbitControls, useTexture } from '@threlte/extras'
+  import { Gizmo, interactivity, OrbitControls, useTexture } from '@threlte/extras'
   import type { Snippet } from 'svelte'
-  import { BoxGeometry, MeshStandardMaterial, RepeatWrapping } from 'three'
+  import { RepeatWrapping } from 'three'
 
   interactivity()
 
@@ -14,22 +14,6 @@
       return texture
     }
   })
-
-  // const floorNormalTexture = useTexture('models/textures/floor/normal.jpg', {
-  //   transform: (texture) => {
-  //     texture.wrapS = texture.wrapT = RepeatWrapping
-  //     texture.repeat.set(10, 10)
-  //     return texture
-  //   }
-  // })
-
-  // const floorRoughnessTexture = useTexture('models/textures/floor/roughness.jpg', {
-  //   transform: (texture) => {
-  //     texture.wrapS = texture.wrapT = RepeatWrapping
-  //     texture.repeat.set(10, 10)
-  //     return texture
-  //   }
-  // })
 
   interface IScene {
     sceneId: string
@@ -116,5 +100,5 @@
   {/await}
 
   {@render children?.()}
-  <Environment isBackground={true} url={'/hdr/Aerodynamics Workshop 1k.hdr'} ground={true} />
+  <!-- <Environment isBackground={true} url={'/hdr/Aerodynamics Workshop 1k.hdr'} ground={true} /> -->
 </div>

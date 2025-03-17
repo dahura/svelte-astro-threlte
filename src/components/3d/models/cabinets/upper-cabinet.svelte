@@ -3,6 +3,7 @@
   import * as THREE from 'three'
   import { T } from '@threlte/core'
   import { toggleRightLeftDoor } from '../../motions/doors/toogle-door.svelte.ts'
+  import { useTexture } from '@threlte/extras'
 
   const cabinetColors = {
     white: {
@@ -31,6 +32,28 @@
       dark: 'rgba(200, 200, 200, 1)' // светло-серый темный
     }
   } as const
+
+  const metalTexture_1_4k = useTexture('textures/4k/metal-white.jpg', {})
+  const metalTexture_2_4k = useTexture('textures/4k/metal-white-2.jpg', {})
+  const scratches_dark_1k = useTexture('textures/1k/scratches-dark.jpg', {})
+  const scratches_light_1k = useTexture('textures/1k/scratches-light.jpg', {})
+
+  const woodTexture = useTexture('models/textures/wood.png', {
+    transform: (texture) => {
+      texture.wrapS = THREE.RepeatWrapping
+      texture.wrapT = THREE.RepeatWrapping
+
+      return texture
+    }
+  }) // Adjust path as needed
+  const handleTexture = useTexture('models/textures/metal.png', {
+    transform: (texture) => {
+      texture.wrapS = THREE.RepeatWrapping
+      texture.wrapT = THREE.RepeatWrapping
+
+      return texture
+    }
+  })
 
   type Event = THREE.Intersection & {
     intersections: THREE.Intersection[]
@@ -62,72 +85,72 @@
   const { toggleLeft, toggleRight, leftDoorRotation, rightDoorRotation } = toggleRightLeftDoor()
 </script>
 
-<T.Group {position}>
-  <!-- Левая стенка -->
-  <T.Mesh position={[-width / 2 + 1, 0, 0]}>
-    <T.BoxGeometry args={[2, height, depth]} />
-    <T.MeshStandardMaterial color={cabinetColors.beigeGray.dark} />
-  </T.Mesh>
-
-  <!-- Правая стенка -->
-  <T.Mesh position={[width / 2 - 1, 0, 0]}>
-    <T.BoxGeometry args={[2, height, depth]} />
-    <T.MeshStandardMaterial color={cabinetColors.beigeGray.dark} />
-  </T.Mesh>
-
-  <!-- Задняя стенка -->
-  <T.Mesh position={[0, 0, -depth / 2 + 1]}>
-    <T.BoxGeometry args={[width, height, 2]} />
-    <T.MeshStandardMaterial color={cabinetColors.beigeGray.dark} />
-  </T.Mesh>
-
-  <!-- Верх шкафа -->
-  <T.Mesh position={[0, height / 2 - 1, 0]}>
-    <T.BoxGeometry args={[width, 2, depth]} />
-    <T.MeshStandardMaterial color={cabinetColors.beigeGray.dark} />
-  </T.Mesh>
-
-  <!-- Низ шкафа -->
-  <T.Mesh position={[0, -height / 2 + 1, 0]}>
-    <T.BoxGeometry args={[width, 2, depth]} />
-    <T.MeshStandardMaterial color={cabinetColors.beigeGray.dark} />
-  </T.Mesh>
-
-  <!-- Полки -->
-  {#each Array(shelves) as _, i}
-    <T.Mesh position={[0, -height / 2 + (i + 1) * shelfHeight, 0]}>
-      <T.BoxGeometry args={[width - 4, 2, depth]} />
-      <T.MeshStandardMaterial color={cabinetColors.beigeGray.default} />
+{#await Promise.all( [woodTexture, handleTexture, metalTexture_1_4k, metalTexture_2_4k, scratches_dark_1k, scratches_light_1k] ) then [woodMap, handleMap, metalMap_1, metalMap_2, scratches_dark, scratches_light]}
+  <T.Group {position}>
+    <!-- Левая стенка -->
+    <T.Mesh position={[-width / 2 + 1, 0, 0]}>
+      <T.BoxGeometry args={[2, height, depth]} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
     </T.Mesh>
-  {/each}
 
-  <!-- Левая дверь -->
-  <T.Group position={[-width / 2 + 1, 0, depth / 2]} rotation.y={$leftDoorRotation}>
-    <T.Mesh position={[doorWidth / 2, 0, 0]} onclick={toggleLeft}>
-      <T.BoxGeometry args={[doorWidth, height - 2, 2]} />
-      <T.MeshStandardMaterial color={doorColor} />
+    <!-- Правая стенка -->
+    <T.Mesh position={[width / 2 - 1, 0, 0]}>
+      <T.BoxGeometry args={[2, height, depth]} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
+    </T.Mesh>
 
-      <!-- Ручка левой двери -->
-      <T.Mesh position={[doorWidth / 2 - 5, 0, 1]}>
-        <T.BoxGeometry args={[9, 60, 4]} />
-        <!-- Increased size for visibility -->
-        <T.MeshStandardMaterial color={handleColor} />
+    <!-- Задняя стенка -->
+    <T.Mesh position={[0, 0, -depth / 2 + 1]}>
+      <T.BoxGeometry args={[width, height, 2]} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
+    </T.Mesh>
+
+    <!-- Верх шкафа -->
+    <T.Mesh position={[0, height / 2 - 1, 0]}>
+      <T.BoxGeometry args={[width, 2, depth]} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
+    </T.Mesh>
+
+    <!-- Низ шкафа -->
+    <T.Mesh position={[0, -height / 2 + 1, 0]}>
+      <T.BoxGeometry args={[width, 2, depth]} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
+    </T.Mesh>
+
+    <!-- Полки -->
+    {#each Array(shelves) as _, i}
+      <T.Mesh position={[0, -height / 2 + (i + 1) * shelfHeight, 0]}>
+        <T.BoxGeometry args={[width - 4, 2, depth]} />
+        <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
       </T.Mesh>
-    </T.Mesh>
-  </T.Group>
+    {/each}
 
-  <!-- Правая дверь -->
-  <T.Group position={[width / 2 - 1, 0, depth / 2]} rotation.y={$rightDoorRotation}>
-    <T.Mesh position={[-doorWidth / 2, 0, 0]} onclick={toggleRight}>
-      <T.BoxGeometry args={[doorWidth, height - 2, 2]} />
-      <T.MeshStandardMaterial color={doorColor} />
+    <!-- Левая дверь -->
+    <T.Group position={[-width / 2 + 1, 0, depth / 2]} rotation.y={$leftDoorRotation}>
+      <T.Mesh position={[doorWidth / 2, 0, 0]} onclick={toggleLeft}>
+        <T.BoxGeometry args={[doorWidth, height - 2, 2]} />
+        <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
 
-      <!-- Ручка правой двери -->
-      <T.Mesh position={[-doorWidth / 2 + 5, 0, 1]}>
-        <T.BoxGeometry args={[9, 60, 4]} />
-        <!-- Increased size for visibility -->
-        <T.MeshStandardMaterial color={handleColor} />
+        <!-- Ручка левой двери -->
+        <T.Mesh position={[doorWidth / 2 - 5, 0, 1]}>
+          <T.BoxGeometry args={[9, 60, 4]} />
+          <T.MeshStandardMaterial map={handleMap} />
+        </T.Mesh>
       </T.Mesh>
-    </T.Mesh>
+    </T.Group>
+
+    <!-- Правая дверь -->
+    <T.Group position={[width / 2 - 1, 0, depth / 2]} rotation.y={$rightDoorRotation}>
+      <T.Mesh position={[-doorWidth / 2, 0, 0]} onclick={toggleRight}>
+        <T.BoxGeometry args={[doorWidth, height - 2, 2]} />
+        <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
+
+        <!-- Ручка правой двери -->
+        <T.Mesh position={[-doorWidth / 2 + 5, 0, 1]}>
+          <T.BoxGeometry args={[9, 60, 4]} />
+          <T.MeshStandardMaterial map={handleMap} />
+        </T.Mesh>
+      </T.Mesh>
+    </T.Group>
   </T.Group>
-</T.Group>
+{/await}

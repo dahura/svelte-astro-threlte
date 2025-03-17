@@ -89,31 +89,31 @@
     <!-- Левая стенка -->
     <T.Mesh position={[-width / 2 + 1, 0, 0]}>
       <T.BoxGeometry args={[2, height, depth]} />
-      <T.MeshStandardMaterial map={scratches_light} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
     </T.Mesh>
 
     <!-- Правая стенка -->
     <T.Mesh position={[width / 2 - 1, 0, 0]}>
       <T.BoxGeometry args={[2, height, depth]} />
-      <T.MeshStandardMaterial map={scratches_light} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
     </T.Mesh>
 
     <!-- Задняя стенка -->
     <T.Mesh position={[0, 0, -depth / 2 + 1]}>
       <T.BoxGeometry args={[width, height, 2]} />
-      <T.MeshStandardMaterial map={scratches_light} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
     </T.Mesh>
 
     <!-- Верх шкафа -->
     <T.Mesh position={[0, height / 2 - 1, 0]}>
       <T.BoxGeometry args={[width, 2, depth]} />
-      <T.MeshStandardMaterial map={scratches_light} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
     </T.Mesh>
 
     <!-- Низ шкафа -->
     <T.Mesh position={[0, -height / 2 + 1, 0]}>
       <T.BoxGeometry args={[width, 2, depth]} />
-      <T.MeshStandardMaterial map={scratches_light} />
+      <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
     </T.Mesh>
 
     <!-- Выдвижные ящики -->
@@ -122,36 +122,36 @@
         <!-- Фронтальная панель ящика -->
         <T.Mesh position={[0, 0, depth / 2]} onclick={() => toggleDrawer(i)}>
           <T.BoxGeometry args={[width - 4, shelfHeight - 2, 2]} />
-          <T.MeshStandardMaterial map={scratches_light} />
+          <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
 
           <!-- Ручка ящика -->
           <T.Mesh position={[0, 0, 1]}>
             <T.BoxGeometry args={[60, 4, 4]} />
-            <T.MeshStandardMaterial map={woodMap} />
+            <T.MeshStandardMaterial map={handleMap} />
           </T.Mesh>
         </T.Mesh>
 
         <!-- Дно ящика -->
         <T.Mesh position={[0, -shelfHeight / 2 + 1, 0]}>
           <T.BoxGeometry args={[width - 8, 2, depth - 4]} />
-          <T.MeshStandardMaterial map={scratches_light} />
+          <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
         </T.Mesh>
 
         <!-- Боковые стенки ящика -->
         <T.Mesh position={[-width / 2 + 4, 0, 0]}>
           <T.BoxGeometry args={[2, shelfHeight - 2, depth - 4]} />
-          <T.MeshStandardMaterial map={scratches_light} />
+          <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
         </T.Mesh>
 
         <T.Mesh position={[width / 2 - 4, 0, 0]}>
           <T.BoxGeometry args={[2, shelfHeight - 2, depth - 4]} />
-          <T.MeshStandardMaterial map={scratches_light} />
+          <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
         </T.Mesh>
 
         <!-- Задняя стенка ящика -->
         <T.Mesh position={[0, 0, -depth / 2 + 2]}>
           <T.BoxGeometry args={[width - 8, shelfHeight - 2, 2]} />
-          <T.MeshStandardMaterial map={scratches_light} />
+          <T.MeshStandardMaterial map={woodMap} color={cabinetColors.beigeGray.light} />
         </T.Mesh>
       </T.Group>
     {/each}
