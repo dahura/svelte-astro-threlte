@@ -50,8 +50,8 @@
       rotateSpeed: 1,
       zoomToCursor: false,
       zoomSpeed: 1,
-      minPolarAngle: 0,
-      maxPolarAngle: Math.PI,
+      minPolarAngle: Math.PI * 0.1,
+      maxPolarAngle: Math.PI * 0.5,
       enableZoom: true
     })
   }: IScene = $props()
@@ -70,10 +70,24 @@
   $effect(() => {
     console.log(autoRotate)
   })
+
+  const wallTexture = useTexture('/textures/4k/wall-white.png', {
+    transform: (texture) => {
+      texture.wrapS = texture.wrapT = RepeatWrapping
+      texture.repeat.set(10, 10) // Adjust the repeat value based on your needs
+      return texture
+    }
+  })
 </script>
 
 <div class="w-full h-full" id={sceneId}>
-  <T.PerspectiveCamera makeDefault position={[position.x, position.y, position.z]} lookAt.y={0.5}>
+  <T.PerspectiveCamera
+    makeDefault
+    position={[position.x, position.y, position.z]}
+    lookAt.y={0.5}
+    near={0.1}
+    far={100000}
+  >
     <OrbitControls
       {enableDamping}
       {autoRotate}
@@ -88,16 +102,49 @@
     </OrbitControls>
   </T.PerspectiveCamera>
 
-  <T.DirectionalLight position.y={10} position.z={10} castShadow />
-  <T.AmbientLight intensity={0.3} />
+  <!-- <T.DirectionalLight
+    position.y={10000}
+    position.z={10000}
+    intensity={5}
+    near={0.1}
+    far={100000}
+    castShadow
+  /> -->
+  <T.AmbientLight intensity={5} position.z={10000} position.x={10000} near={0.1} far={100000} />
 
   <!-- Textured Floor -->
   {#await Promise.all([floorBaseTexture]) then [baseMap]}
     <T.Mesh rotation.x={-Math.PI / 2} position.y={0} receiveShadow>
-      <T.PlaneGeometry args={[1000, 1000]} />
+      <T.PlaneGeometry args={[10000, 10000]} />
       <T.MeshStandardMaterial map={baseMap} />
     </T.Mesh>
   {/await}
+
+  <!-- Textured Back Wall -->
+  {#await Promise.all([wallTexture]) then [wallTexture]}
+    <T.Mesh rotation.x={0} position.y={0} position.z={-1000} receiveShadow>
+      <T.PlaneGeometry args={[10000, 10000]} />
+      <T.MeshStandardMaterial map={wallTexture} />
+    </T.Mesh>
+  {/await}
+
+  <!-- Textured Left Wall -->
+  {#await Promise.all([wallTexture]) then [wallTexture]}
+    <T.Mesh rotation.y={Math.PI / 2} position={[-5000, 0, 0]} receiveShadow>
+      <T.PlaneGeometry args={[10000, 10000]} />
+      <T.MeshStandardMaterial map={wallTexture} />
+    </T.Mesh>
+  {/await}
+
+  <!-- Textured Right Wall -->
+  {#await Promise.all([wallTexture]) then [wallTexture]}
+    <T.Mesh rotation.y={-Math.PI / 2} position={[5000, 0, 0]} receiveShadow>
+      <T.PlaneGeometry args={[10000, 10000]} />
+      <T.MeshStandardMaterial map={wallTexture} />
+    </T.Mesh>
+  {/await}
+
+  <!-- <T.DirectionalLight position={[5000, 100, 5000]} intensity={1} /> -->
 
   {@render children?.()}
   <!-- <Environment isBackground={true} url={'/hdr/Aerodynamics Workshop 1k.hdr'} ground={true} /> -->

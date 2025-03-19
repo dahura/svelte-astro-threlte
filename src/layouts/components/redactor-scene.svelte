@@ -24,7 +24,7 @@
 
 <CanvasContainer {isChatVisible}>
   <Canvas>
-    <Scene sceneId="redactor-scene" bind:settings position={{ x: 700, y: 700, z: 700 }}>
+    <Scene sceneId="redactor-scene" bind:settings position={{ x: 0, y: 900, z: 3000 }}>
       <Redactor />
     </Scene>
   </Canvas>

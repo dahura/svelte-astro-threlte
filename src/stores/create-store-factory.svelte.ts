@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 
 export function createStoreFactory<T>(defaultValue: T) {
   return (storeName: string) => {
@@ -9,6 +9,8 @@ export function createStoreFactory<T>(defaultValue: T) {
       subscribe: store.subscribe,
       set: store.set,
       update: store.update,
+      reset: () => store.set(defaultValue),
+      get: () => get(store), // Метод для чтения текущего значения
     };
   };
 }
