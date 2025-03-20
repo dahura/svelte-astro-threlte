@@ -2,7 +2,7 @@ import { COLORS, type Color } from "$/shared/constants/colors";
 import { createStoreFactory } from "../create-store-factory.svelte";
 
 interface IColors {
-  currentColor: string;
+  currentColor: Color;
   availableColors: Color[]
 }
 

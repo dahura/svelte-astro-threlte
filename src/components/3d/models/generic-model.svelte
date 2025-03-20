@@ -4,6 +4,7 @@
   import { T } from '@threlte/core'
   import { useTexture } from '@threlte/extras'
   import { toggleDrawerAnimation } from '../motions/drawer/toggle-drawer.svelte.ts'
+  import { toggleRightLeftDoor } from '../motions/doors/toogle-door.svelte.ts'
 
   let {
     model,
@@ -28,6 +29,7 @@
   })
 
   const { toggleDrawer: toggle } = toggleDrawerAnimation()
+  const { toggleLeft, toggleRight, leftDoorRotation, rightDoorRotation } = toggleRightLeftDoor()
 
   // Высота каждой полки/ящика
   const shelfHeight = model.dimensions.height / (model.shelves?.count ?? 1)
@@ -44,6 +46,32 @@
         drawerPositions[index] = value
       }
     })
+  }
+  const doorPosition = (
+    model: GenericModelProps,
+    count: number,
+    index: number
+  ): [x: number, y: number, z: number] => {
+    const halfWidth = model.dimensions.width / 4
+    const depthOffset = model.dimensions.depth / 2 - 1
+
+    if (count === 1) {
+      return [0, 0, depthOffset]
+    }
+    if (count === 2) {
+      return index % 2 === 0 ? [-halfWidth + 2, 0, depthOffset] : [halfWidth - 2, 0, depthOffset]
+    }
+    return [0, 0, depthOffset]
+  }
+
+  const doorRotation = (count: number, index: number) => {
+    if (count === 1) {
+      return 0
+    }
+    if (count === 2) {
+      return index % 2 === 0 ? $leftDoorRotation : $rightDoorRotation
+    }
+    return 0
   }
 </script>
 
@@ -79,15 +107,71 @@
       <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
     </T.Mesh>
 
+    <!-- Полки -->
+    {#if model.shelves}
+      {#each Array(model.shelves.count) as _, i}
+        <T.Mesh position={[0, -model.dimensions.height / 2 + (i + 1) * shelfHeight, 0]}>
+          <T.BoxGeometry args={[model.dimensions.width - 4, 2, model.dimensions.depth]} />
+          <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
+        </T.Mesh>
+      {/each}
+    {/if}
+
     <!-- Двери -->
     {#if model.doors}
       {#each Array(model.doors.count) as _, i}
-        <T.Mesh position={[0, 0, model.dimensions.depth / 2]}>
-          <T.BoxGeometry
-            args={[model.dimensions.width / model.doors.count - 4, model.dimensions.height - 2, 2]}
-          />
-          <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
-        </T.Mesh>
+        {#if model.doors.count === 2}
+          <T.Group
+            position={[-model.dimensions.width / 2 + 1, 0, model.dimensions.depth / 2]}
+            rotation.y={$leftDoorRotation}
+          >
+            <T.Mesh position={[model.dimensions.width / 4, 0, 0]} onclick={toggleLeft}>
+              <T.BoxGeometry args={[model.dimensions.width / 2, model.dimensions.height - 2, 2]} />
+              <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
+
+              <!-- Ручка левой двери -->
+              <T.Mesh position={[model.dimensions.width / 4 - 5, 0, 1]}>
+                <T.BoxGeometry args={[9, 60, 4]} />
+                <T.MeshStandardMaterial map={handleMap} />
+              </T.Mesh>
+            </T.Mesh>
+          </T.Group>
+
+          <!-- Правая дверь -->
+          <T.Group
+            position={[model.dimensions.width / 2 - 1, 0, model.dimensions.depth / 2]}
+            rotation.y={$rightDoorRotation}
+          >
+            <T.Mesh position={[-model.dimensions.width / 4, 0, 0]} onclick={toggleRight}>
+              <T.BoxGeometry args={[model.dimensions.width / 2, model.dimensions.height - 2, 2]} />
+              <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
+
+              <!-- Ручка правой двери -->
+              <T.Mesh position={[-model.dimensions.width / 4 + 5, 0, 1]}>
+                <T.BoxGeometry args={[9, 60, 4]} />
+                <T.MeshStandardMaterial map={handleMap} />
+              </T.Mesh>
+              <!-- Ручка  двери -->
+            </T.Mesh>
+          </T.Group>
+        {/if}
+        {#if model.doors.count === 1}
+          <T.Group
+            position={[model.dimensions.width / 2 - 1, 0, model.dimensions.depth / 2]}
+            rotation.y={$rightDoorRotation}
+          >
+            <T.Mesh position={[-model.dimensions.width / 2, 0, 0]} onclick={toggleRight}>
+              <T.BoxGeometry args={[model.dimensions.width, model.dimensions.height - 2, 2]} />
+              <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
+              <!-- Ручка  двери -->
+              <T.Mesh position={[-model.dimensions.width / 2 + 5, 0, 1]}>
+                <T.BoxGeometry args={[9, 60, 4]} />
+                <T.MeshStandardMaterial map={handleMap} />
+              </T.Mesh>
+              <!-- Ручка  двери -->
+            </T.Mesh>
+          </T.Group>
+        {/if}
       {/each}
     {/if}
 

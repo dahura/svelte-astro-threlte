@@ -70,7 +70,6 @@
 
   const {
     width = 120,
-
     height = 45,
     depth = 40,
     color = '#fff',
@@ -86,7 +85,7 @@
 </script>
 
 {#await Promise.all( [woodTexture, handleTexture, metalTexture_1_4k, metalTexture_2_4k, scratches_dark_1k, scratches_light_1k] ) then [woodMap, handleMap, metalMap_1, metalMap_2, scratches_dark, scratches_light]}
-  <T.Group {position}>
+  <T.Group position={[position.x, position.y, position.z]}>
     <!-- Левая стенка -->
     <T.Mesh position={[-width / 2 + 1, 0, 0]}>
       <T.BoxGeometry args={[2, height, depth]} />
