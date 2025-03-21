@@ -9,7 +9,7 @@
 
   export const cabinets: GenericModelProps[] = [
     {
-      dimensions: { width: 600, height: 720, depth: 561, plinthHeight: 150 },
+      dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
       material: {
         carcassColor: COLORS.saddleBrown.default,
         facadeColor: COLORS.saddleBrown.dark, // SaddleBrown
@@ -17,23 +17,24 @@
       },
       specialMechanisms: { softCloseHinges: true },
       shelves: { count: 3, adjustable: true, material: 'wood' },
-      drawers: { count: 2, sizes: [240, 240, 240], withSoftClose: true }
+      drawers: { count: 3, sizes: [490, 490, 340], withSoftClose: false }
     },
     {
-      dimensions: { width: 800, height: 720, depth: 561, plinthHeight: 150 },
+      dimensions: { width: 800, height: 920, depth: 561, plinthHeight: 150 },
       material: {
         carcassColor: COLORS.saddleBrown.default,
         facadeColor: COLORS.saddleBrown.dark, // SaddleBrown
         finish: 'wood-texture'
       }, // Sienna
       specialMechanisms: { softCloseHinges: true },
-      drawers: { count: 2, sizes: [240, 240, 240], withSoftClose: true },
-      shelves: { count: 2, adjustable: true, material: 'wood' }
+      // drawers: { count: 2, sizes: [240, 240, 240], withSoftClose: true },
+      shelves: { count: 2, adjustable: true, material: 'wood' },
+      doors: { count: 1, type: 'hinged' }
     },
     {
-      dimensions: { width: 600, height: 720, depth: 561, plinthHeight: 150 },
+      dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
       shelves: { count: 3, adjustable: true, material: 'wood' },
-      drawers: { count: 3, sizes: [240, 240, 240], withSoftClose: true },
+
       material: {
         carcassColor: COLORS.saddleBrown.default,
         facadeColor: COLORS.saddleBrown.dark,
@@ -41,9 +42,9 @@
       } // Chocolate
     },
     {
-      dimensions: { width: 900, height: 720, depth: 561, plinthHeight: 150 },
+      dimensions: { width: 900, height: 920, depth: 561, plinthHeight: 150 },
       shelves: { count: 3, adjustable: true, material: 'wood' },
-      drawers: { count: 3, sizes: [240, 320, 240], withSoftClose: false },
+      drawers: { count: 3, sizes: [490, 490, 340], withSoftClose: false },
       material: {
         carcassColor: COLORS.saddleBrown.default,
         facadeColor: COLORS.saddleBrown.dark, // Burlywood
@@ -51,9 +52,21 @@
       }
     },
     {
-      dimensions: { width: 600, height: 720, depth: 561, plinthHeight: 150 },
-      shelves: { count: 2, adjustable: true, material: 'wood' },
-      doors: { count: 2, type: 'hinged' },
+      dimensions: { width: 400, height: 920, depth: 561, plinthHeight: 150 },
+      shelves: { count: 3, adjustable: true, material: 'wood' },
+      drawers: { count: 3, sizes: [490, 490, 340], withSoftClose: false },
+      // drawers: { count: 2, sizes: [340], withSoftClose: false },
+      material: {
+        carcassColor: COLORS.wheat.default,
+        facadeColor: COLORS.wheat.dark, // Wheat
+        finish: 'wood-texture'
+      }
+    },
+    {
+      dimensions: { width: 600, height: 2400, depth: 561, plinthHeight: 150 },
+      shelves: { count: 5, adjustable: true, material: 'wood' },
+      drawers: { count: 5, sizes: [490, 490, 560, 520, 340], withSoftClose: false },
+
       // drawers: { count: 2, sizes: [340], withSoftClose: false },
       material: {
         carcassColor: COLORS.wheat.default,
@@ -86,9 +99,8 @@
 {#each cabinets as cabinet, index}
   <GenericModel
     position={{
-      // x: positions[index] - (index === positions.length - 1 ? gap * index : 0),
       x: positionsX[index],
-      y: 360 + gapY,
+      y: cabinet.dimensions.height / 2,
       z: 0
     }}
     model={{
