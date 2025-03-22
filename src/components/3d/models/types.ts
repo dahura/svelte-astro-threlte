@@ -2,7 +2,7 @@ interface Dimensions {
     width: number;  // Ширина (20, 30, 40, 45, 50, 60, 80, 90, 100, 120 см)
     height: number;  // Высота корпуса (720, 792, 2016, 2088 мм и т. д.)
     depth: number;  // Глубина шкафа (561 мм по стандарту)
-    plinthHeight: number;  // Высота цоколя (70, 100, 150, 200 мм)
+    plinthHeight?: number;  // Высота цоколя (70, 100, 150, 200 мм)
   }
 
   //Дверь
@@ -49,6 +49,7 @@ interface Dimensions {
   }
 
  export interface GenericModelProps {
+    position: {x: number, y: number, z: number};
     dimensions: Dimensions;
     doors?: DoorsConfig ;
     drawers?: DrawersConfig;

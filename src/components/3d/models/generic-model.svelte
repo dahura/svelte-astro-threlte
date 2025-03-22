@@ -6,10 +6,7 @@
   import { toggleDrawerAnimation } from '../motions/drawer/toggle-drawer.svelte.ts'
   import { toggleRightLeftDoor } from '../motions/doors/toogle-door.svelte.ts'
 
-  let {
-    model,
-    position
-  }: { model: GenericModelProps; position: { x: number; y: number; z: number } } = $props()
+  let { model }: { model: GenericModelProps } = $props()
 
   const MATERIAL_THICKNESS = 2
 
@@ -39,8 +36,13 @@
 
   // Обновленная функция для корректировки высот ящиков
   function adjustDrawerSizes(sizes: number[], maxHeight: number): number[] {
+    console.log('maxHeight', maxHeight)
     const totalHeight = sizes.reduce((sum, size) => sum + size, 0)
-    if (totalHeight > maxHeight) {
+    console.log('totalHeight', totalHeight)
+
+    const isTotalHeightGreaterThanMaxHeight = totalHeight > maxHeight
+    console.log('isTotalHeightGreaterThanMaxHeight', isTotalHeightGreaterThanMaxHeight)
+    if (isTotalHeightGreaterThanMaxHeight) {
       const scaleFactor = maxHeight / totalHeight
       return sizes.map((size) => size * scaleFactor)
     }
@@ -118,17 +120,23 @@
 </script>
 
 {#await Promise.all([woodTexture, handleTexture]) then [woodMap, handleMap]}
-  <T.Group position={[position.x, position.y, position.z]}>
+  <T.Group position={[model.position.x, model.position.y, model.position.z]}>
     <!-- Цоколь -->
-    <T.Mesh position={[0, -model.dimensions.height / 2 + model.dimensions.plinthHeight / 2, 0]}>
-      <T.BoxGeometry
-        args={[model.dimensions.width, model.dimensions.plinthHeight, model.dimensions.depth * 0.8]}
-      />
-      <T.MeshStandardMaterial color={model.material.carcassColor} />
-    </T.Mesh>
+    {#if model.dimensions.plinthHeight}
+      <T.Mesh position={[0, -model.dimensions.height / 2 + model.dimensions.plinthHeight / 2, 0]}>
+        <T.BoxGeometry
+          args={[
+            model.dimensions.width,
+            model.dimensions.plinthHeight,
+            model.dimensions.depth * 0.8
+          ]}
+        />
+        <T.MeshStandardMaterial color={model.material.carcassColor} />
+      </T.Mesh>
+    {/if}
 
     <!-- Основная часть модели -->
-    <T.Group position={[0, model.dimensions.plinthHeight, 0]}>
+    <T.Group position={[0, model.dimensions.plinthHeight ?? 0, 0]}>
       <!-- Левая стенка -->
       <T.Mesh position={[-model.dimensions.width / 2 + 1, 0, 0]}>
         <T.BoxGeometry args={[2, model.dimensions.height, model.dimensions.depth]} />
