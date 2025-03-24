@@ -36,9 +36,9 @@ interface Dimensions {
 
   //Материал
   interface MaterialConfig {
-    carcassColor: string;  // Цвет корпуса
-    facadeColor: string;  // Цвет фасада
-    finish: "matte" | "glossy" | "wood-texture";  // Тип отделки
+    carcassColor?: string;  // Цвет корпуса
+    facadeColor?: string;  // Цвет фасада
+    finish?: "matte" | "glossy" | "wood-texture";  // Тип отделки
   }
 
   //Специальные механизмы

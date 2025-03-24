@@ -38,6 +38,14 @@ export var COLORS = {
       light_hex: '#FFEBCD',
       dark: 'rgba(200, 180, 150, 1)', // Dark variant
       dark_hex: '#C8B496' // Dark hex
+    },
+    transparent: {
+      default: 'rgba(0, 0, 0, 0)', // Transparent
+      default_hex: '#00000000',
+      light: 'rgba(0, 0, 0, 0)', // Light variant (transparent)
+      light_hex: '#00000000',
+      dark: 'rgba(0, 0, 0, 0)', // Dark variant (transparent)
+      dark_hex: '#00000000' // Dark hex (transparent)
     }
   } as const
 

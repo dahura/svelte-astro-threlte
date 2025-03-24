@@ -1,19 +1,10 @@
 <script lang="ts">
   import { T } from '@threlte/core'
-  import { Gizmo, interactivity, OrbitControls, useTexture } from '@threlte/extras'
+  import { Gizmo, interactivity, OrbitControls } from '@threlte/extras'
+  import { Color } from 'three'
   import type { Snippet } from 'svelte'
-  import { RepeatWrapping } from 'three'
 
   interactivity()
-
-  // Load floor textures
-  const floorBaseTexture = useTexture('/textures/4k/metal-white.jpg', {
-    transform: (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping
-      texture.repeat.set(10, 10) // Adjust the repeat value based on your needs
-      return texture
-    }
-  })
 
   interface IScene {
     sceneId: string
@@ -35,7 +26,6 @@
     }
   }
 
-  // Subscribe to the scene store to get settings for the current scene
   let {
     sceneId,
     children,
@@ -70,25 +60,12 @@
   $effect(() => {
     console.log(autoRotate)
   })
-
-  const wallTexture = useTexture('/textures/4k/wall-white.png', {
-    transform: (texture) => {
-      texture.wrapS = texture.wrapT = RepeatWrapping
-      texture.repeat.set(10, 10) // Adjust the repeat value based on your needs
-      return texture
-    }
-  })
 </script>
 
-<div class="w-full h-full" id={sceneId}>
-  <T.PerspectiveCamera
-    makeDefault
-    position={[position.x, position.y, position.z]}
-    lookAt.y={0.5}
-    near={0.1}
-    far={100000}
-  >
+<class class="w-full h-full" id={sceneId}>
+  <T.PerspectiveCamera makeDefault position={[0, 1500, 2000]} near={0.1} far={10000}>
     <OrbitControls
+      onchange={(e) => console.log(e)}
       {enableDamping}
       {autoRotate}
       {rotateSpeed}
@@ -102,50 +79,42 @@
     </OrbitControls>
   </T.PerspectiveCamera>
 
-  <!-- <T.DirectionalLight
-    position.y={10000}
-    position.z={10000}
-    intensity={5}
-    near={0.1}
-    far={100000}
-    castShadow
-  /> -->
-  <T.AmbientLight intensity={5} position.z={10000} position.x={10000} near={0.1} far={100000} />
+  <!-- Ambient Light -->
+  <T.AmbientLight intensity={0.3} />
 
-  <!-- Textured Floor -->
-  {#await Promise.all([floorBaseTexture]) then [baseMap]}
-    <T.Mesh rotation.x={-Math.PI / 2} position.y={0} receiveShadow>
-      <T.PlaneGeometry args={[10000, 10000]} />
-      <T.MeshStandardMaterial map={baseMap} />
-    </T.Mesh>
-  {/await}
+  <!-- Directional Light -->
+  <T.DirectionalLight position={[0, 5000, 5000]} intensity={1.5} castShadow />
 
-  <!-- Textured Back Wall -->
-  {#await Promise.all([wallTexture]) then [wallTexture]}
-    <T.Mesh rotation.x={0} position.y={0} position.z={-1000} receiveShadow>
-      <T.PlaneGeometry args={[10000, 10000]} />
-      <T.MeshStandardMaterial map={wallTexture} />
-    </T.Mesh>
-  {/await}
+  <!-- Additional Directional Light for Accents -->
+  <T.DirectionalLight position={[-5000, 3000, 5000]} intensity={0.8} color={0xffeedd} />
 
-  <!-- Textured Left Wall -->
-  {#await Promise.all([wallTexture]) then [wallTexture]}
-    <T.Mesh rotation.y={Math.PI / 2} position={[-5000, 0, 0]} receiveShadow>
-      <T.PlaneGeometry args={[10000, 10000]} />
-      <T.MeshStandardMaterial map={wallTexture} />
-    </T.Mesh>
-  {/await}
+  <!-- Point Light -->
+  <T.PointLight position={[0, 5000, 0]} intensity={0.5} distance={10000} />
 
-  <!-- Textured Right Wall -->
-  {#await Promise.all([wallTexture]) then [wallTexture]}
-    <T.Mesh rotation.y={-Math.PI / 2} position={[5000, 0, 0]} receiveShadow>
-      <T.PlaneGeometry args={[10000, 10000]} />
-      <T.MeshStandardMaterial map={wallTexture} />
-    </T.Mesh>
-  {/await}
+  <!-- New Walls -->
+  <!-- <T.Mesh position={[0, 0, -1000]} receiveShadow>
+    <T.PlaneGeometry args={[4000, 2000]} />
+    <T.MeshStandardMaterial color={new Color(0xcccccc)} opacity={0.5} transparent={true} />
+  </T.Mesh>
 
-  <!-- <T.DirectionalLight position={[5000, 100, 5000]} intensity={1} /> -->
+  <T.Mesh rotation.y={Math.PI / 2} position={[-2000, 0, 0]} receiveShadow>
+    <T.PlaneGeometry args={[4000, 2000]} />
+    <T.MeshStandardMaterial color={new Color(0xcccccc)} />
+  </T.Mesh> -->
 
-  {@render children?.()}
-  <!-- <Environment isBackground={true} url={'/hdr/Aerodynamics Workshop 1k.hdr'} ground={true} /> -->
-</div>
+  <!-- <T.Mesh rotation.y={-Math.PI / 2} position={[2000, 0, 0]} receiveShadow>
+    <T.PlaneGeometry args={[4000, 2000]} />
+    <T.MeshStandardMaterial color={new Color(0xcccccc)} />
+  </T.Mesh> -->
+
+  <!-- New Floor -->
+  <!-- <T.Mesh rotation.x={-Math.PI / 2} position.y={-1000} receiveShadow>
+    <T.PlaneGeometry args={[4000, 4000]} />
+    <T.MeshStandardMaterial color={new Color(0xcccccc)} />
+  </T.Mesh> -->
+
+  <!-- Centered Model -->
+  <T.Group position={[-2000, 0, 0]}>
+    {@render children?.()}
+  </T.Group>
+</class>

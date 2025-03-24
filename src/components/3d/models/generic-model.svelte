@@ -5,13 +5,42 @@
   import { useTexture } from '@threlte/extras'
   import { toggleDrawerAnimation } from '../motions/drawer/toggle-drawer.svelte.ts'
   import { toggleRightLeftDoor } from '../motions/doors/toogle-door.svelte.ts'
+  import { default as Drawer } from './parts/drawers/drawers.svelte'
 
   let { model }: { model: GenericModelProps } = $props()
 
-  const MATERIAL_THICKNESS = 2
+  const MATERIAL_THICKNESS = 12
+  const WALL_THICKNESS = 4
+  const FACADE_THICKNESS = 2
+  const COUNTERTOP_THICKNESS = 28 // Default thickness for countertop
+  const COUNTERTOP_OVERHANG = 50
 
-  // Загрузка текстур
-  const woodTexture = useTexture('models/textures/wood.png', {
+  // Новые константы для толщины материалов
+  const DOOR_THICKNESS = 20
+  const SIDE_WALL_THICKNESS = 16
+  const BACK_WALL_THICKNESS = 4
+  const FLOOR_THICKNESS = 19
+  const SHELF_THICKNESS = 16
+  // Default overhang for countertop in mm
+
+  // // Загрузка текстур
+  // const woodDarkTexture = useTexture('textures/4k/wood-dark.jpg', {
+  //   transform: (texture) => {
+  //     texture.wrapS = THREE.RepeatWrapping
+  //     texture.wrapT = THREE.RepeatWrapping
+  //     return texture
+  //   }
+  // })
+
+  // const handleDarkTexture = useTexture('textures/4k/metal-dark.jpg', {
+  //   transform: (texture) => {
+  //     texture.wrapS = THREE.RepeatWrapping
+  //     texture.wrapT = THREE.RepeatWrapping
+  //     return texture
+  //   }
+  // })
+
+  const woodTexture = useTexture('textures/4k/wooden-light.jpg', {
     transform: (texture) => {
       texture.wrapS = THREE.RepeatWrapping
       texture.wrapT = THREE.RepeatWrapping
@@ -19,7 +48,7 @@
     }
   })
 
-  const handleTexture = useTexture('models/textures/metal.png', {
+  const handleTexture = useTexture('textures/4k/wooden-light.jpg', {
     transform: (texture) => {
       texture.wrapS = THREE.RepeatWrapping
       texture.wrapT = THREE.RepeatWrapping
@@ -68,6 +97,7 @@
     for (let i = 0; i <= index; i++) {
       position += adjustedDrawerSizes[i] > 0 ? adjustedDrawerSizes[i] : gapHeight
     }
+    // Убедитесь, что позиция учитывает толщину материала
     return (
       position - (adjustedDrawerSizes[index] > 0 ? adjustedDrawerSizes[index] / 2 : gapHeight / 2)
     )
@@ -138,105 +168,87 @@
     <!-- Основная часть модели -->
     <T.Group position={[0, model.dimensions.plinthHeight ?? 0, 0]}>
       <!-- Левая стенка -->
-      <T.Mesh position={[-model.dimensions.width / 2 + 1, 0, 0]}>
-        <T.BoxGeometry args={[2, model.dimensions.height, model.dimensions.depth]} />
-        <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
+      <T.Mesh position={[-model.dimensions.width / 2 + SIDE_WALL_THICKNESS / 2, 0, 0]}>
+        <T.BoxGeometry
+          args={[SIDE_WALL_THICKNESS, model.dimensions.height, model.dimensions.depth]}
+        />
+        <T.MeshStandardMaterial
+          map={woodMap}
+          color={new THREE.Color(0x333333)}
+          roughness={0.5}
+          metalness={0.1}
+        />
       </T.Mesh>
 
       <!-- Правая стенка -->
-      <T.Mesh position={[model.dimensions.width / 2 - 1, 0, 0]}>
-        <T.BoxGeometry args={[2, model.dimensions.height, model.dimensions.depth]} />
-        <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
+      <T.Mesh position={[model.dimensions.width / 2 - SIDE_WALL_THICKNESS / 2, 0, 0]}>
+        <T.BoxGeometry
+          args={[SIDE_WALL_THICKNESS, model.dimensions.height, model.dimensions.depth]}
+        />
+        <T.MeshStandardMaterial
+          map={woodMap}
+          color={new THREE.Color(0x333333)}
+          emissive={new THREE.Color(0x000000)}
+          emissiveIntensity={0}
+          roughness={0.5}
+          metalness={0.1}
+        />
       </T.Mesh>
 
       <!-- Задняя стенка -->
-      <T.Mesh position={[0, 0, -model.dimensions.depth / 2 + 1]}>
-        <T.BoxGeometry args={[model.dimensions.width, model.dimensions.height, 2]} />
-        <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
+      <T.Mesh position={[0, 0, -model.dimensions.depth / 2 + BACK_WALL_THICKNESS / 2]}>
+        <T.BoxGeometry
+          args={[model.dimensions.width, model.dimensions.height, BACK_WALL_THICKNESS]}
+        />
+        <T.MeshStandardMaterial
+          map={woodMap}
+          color={new THREE.Color(0x333333)}
+          emissive={new THREE.Color(0x000000)}
+          emissiveIntensity={0}
+          roughness={0.5}
+          metalness={0.1}
+        />
       </T.Mesh>
 
       <!-- Верх шкафа -->
-      <T.Mesh position={[0, model.dimensions.height / 2 - MATERIAL_THICKNESS, 0]}>
-        <T.BoxGeometry
-          args={[model.dimensions.width, MATERIAL_THICKNESS, model.dimensions.depth]}
+      <T.Mesh position={[0, model.dimensions.height / 2 - FLOOR_THICKNESS / 2, 0]}>
+        <T.BoxGeometry args={[model.dimensions.width, FLOOR_THICKNESS, model.dimensions.depth]} />
+        <T.MeshStandardMaterial
+          map={woodMap}
+          color={new THREE.Color(0x333333)}
+          emissive={new THREE.Color(0x000000)}
+          emissiveIntensity={0}
+          roughness={0.5}
+          metalness={0.1}
         />
-        <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
       </T.Mesh>
 
       <!-- Низ шкафа -->
-      <T.Mesh position={[0, -model.dimensions.height / 2 + MATERIAL_THICKNESS, 0]}>
-        <T.BoxGeometry
-          args={[model.dimensions.width, MATERIAL_THICKNESS, model.dimensions.depth]}
+      <T.Mesh position={[0, -model.dimensions.height / 2 + FLOOR_THICKNESS / 2, 0]}>
+        <T.BoxGeometry args={[model.dimensions.width, FLOOR_THICKNESS, model.dimensions.depth]} />
+        <T.MeshStandardMaterial
+          map={woodMap}
+          color={new THREE.Color(0x333333)}
+          emissive={new THREE.Color(0x000000)}
+          emissiveIntensity={0}
+          roughness={0.5}
+          metalness={0.1}
         />
-        <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
       </T.Mesh>
 
       <!-- Ящики -->
       {#if model.drawers}
         {#each Array(model.drawers.count) as _, i}
-          {#if adjustedDrawerSizes[i] > 0}
-            <T.Group position={[0, getElementPosition(i), drawerPositions[i]]}>
-              <T.Mesh position={[0, 0, model.dimensions.depth / 2]} onclick={() => toggleDrawer(i)}>
-                <T.BoxGeometry
-                  args={[model.dimensions.width - 4, getDrawerHeight(i) - MATERIAL_THICKNESS, 2]}
-                />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
-              </T.Mesh>
-
-              <!-- Ручка ящика -->
-              {#if model.handles}
-                <T.Mesh position={[0, 0, 1]}>
-                  <T.BoxGeometry args={[60, 4, 4]} />
-                  <T.MeshStandardMaterial map={handleMap} />
-                </T.Mesh>
-              {/if}
-
-              <!-- Боковины и дно ящика -->
-              <T.Mesh position={[0, -getDrawerHeight(i) / 2 + MATERIAL_THICKNESS / 2, 0]}>
-                <T.BoxGeometry
-                  args={[
-                    model.dimensions.width - 8,
-                    MATERIAL_THICKNESS,
-                    model.dimensions.depth - 4
-                  ]}
-                />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
-              </T.Mesh>
-
-              <T.Mesh position={[-model.dimensions.width / 2 + 4, 0, 0]}>
-                <T.BoxGeometry
-                  args={[
-                    MATERIAL_THICKNESS,
-                    getDrawerHeight(i) - MATERIAL_THICKNESS,
-                    model.dimensions.depth - 4
-                  ]}
-                />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
-              </T.Mesh>
-
-              <T.Mesh position={[model.dimensions.width / 2 - 4, 0, 0]}>
-                <T.BoxGeometry
-                  args={[
-                    MATERIAL_THICKNESS,
-                    getDrawerHeight(i) - MATERIAL_THICKNESS,
-                    model.dimensions.depth - 4
-                  ]}
-                />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
-              </T.Mesh>
-
-              <T.Mesh position={[0, 0, -model.dimensions.depth / 2 + MATERIAL_THICKNESS]}>
-                <T.BoxGeometry
-                  args={[
-                    model.dimensions.width - 8,
-                    getDrawerHeight(i) - MATERIAL_THICKNESS,
-                    MATERIAL_THICKNESS
-                  ]}
-                />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
-              </T.Mesh>
-            </T.Group>
-          {/if}
+          <Drawer
+            {model}
+            {i}
+            {adjustedDrawerSizes}
+            {drawerPositions}
+            {woodMap}
+            {handleMap}
+            {MATERIAL_THICKNESS}
+            {FACADE_THICKNESS}
+          />
         {/each}
       {/if}
 
@@ -247,12 +259,20 @@
             position={[
               0,
               getElementPosition(i) +
-                (adjustedDrawerSizes[i] > 0 ? adjustedDrawerSizes[i] / 2 : gapHeight / 2),
+                (adjustedDrawerSizes[i] > 0 ? adjustedDrawerSizes[i] / 2 : gapHeight / 2) -
+                SHELF_THICKNESS / 2,
               0
             ]}
           >
-            <T.BoxGeometry args={[model.dimensions.width - 4, 2, model.dimensions.depth]} />
-            <T.MeshStandardMaterial map={woodMap} color={model.material.carcassColor} />
+            <T.BoxGeometry
+              args={[model.dimensions.width - 4, SHELF_THICKNESS, model.dimensions.depth]}
+            />
+            <T.MeshStandardMaterial
+              map={woodMap}
+              color={new THREE.Color(0x333333)}
+              roughness={0.5}
+              metalness={0.1}
+            />
           </T.Mesh>
         {/each}
       {/if}
@@ -271,14 +291,19 @@
             >
               <T.Mesh position={[model.dimensions.width / 4, 0, 0]} onclick={toggleLeft}>
                 <T.BoxGeometry
-                  args={[model.dimensions.width / 2, model.dimensions.height - 2, 2]}
+                  args={[model.dimensions.width / 2, model.dimensions.height - 2, DOOR_THICKNESS]}
                 />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
+                <T.MeshStandardMaterial
+                  map={woodMap}
+                  color={new THREE.Color(0x333333)}
+                  roughness={0.5}
+                  metalness={0.1}
+                />
 
                 <!-- Ручка левой двери -->
                 <T.Mesh position={[model.dimensions.width / 4 - 5, 0, 1]}>
                   <T.BoxGeometry args={[9, 60, 4]} />
-                  <T.MeshStandardMaterial map={handleMap} />
+                  <T.MeshStandardMaterial map={handleMap} roughness={0.5} metalness={0.1} />
                 </T.Mesh>
               </T.Mesh>
             </T.Group>
@@ -290,14 +315,19 @@
             >
               <T.Mesh position={[-model.dimensions.width / 4, 0, 0]} onclick={toggleRight}>
                 <T.BoxGeometry
-                  args={[model.dimensions.width / 2, model.dimensions.height - 2, 2]}
+                  args={[model.dimensions.width / 2, model.dimensions.height - 2, DOOR_THICKNESS]}
                 />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
+                <T.MeshStandardMaterial
+                  map={woodMap}
+                  color={new THREE.Color(0x333333)}
+                  roughness={0.5}
+                  metalness={0.1}
+                />
 
                 <!-- Ручка правой двери -->
                 <T.Mesh position={[-model.dimensions.width / 4 + 5, 0, 1]}>
                   <T.BoxGeometry args={[9, 60, 4]} />
-                  <T.MeshStandardMaterial map={handleMap} />
+                  <T.MeshStandardMaterial map={handleMap} roughness={0.5} metalness={0.1} />
                 </T.Mesh>
                 <!-- Ручка  двери -->
               </T.Mesh>
@@ -309,12 +339,19 @@
               rotation.y={$rightDoorRotation}
             >
               <T.Mesh position={[-model.dimensions.width / 2, 0, 0]} onclick={toggleRight}>
-                <T.BoxGeometry args={[model.dimensions.width, model.dimensions.height - 2, 2]} />
-                <T.MeshStandardMaterial map={woodMap} color={model.material.facadeColor} />
+                <T.BoxGeometry
+                  args={[model.dimensions.width, model.dimensions.height - 2, DOOR_THICKNESS]}
+                />
+                <T.MeshStandardMaterial
+                  map={woodMap}
+                  color={new THREE.Color(0x333333)}
+                  roughness={0.5}
+                  metalness={0.1}
+                />
                 <!-- Ручка  двери -->
                 <T.Mesh position={[-model.dimensions.width / 2 + 5, 0, 1]}>
                   <T.BoxGeometry args={[9, 60, 4]} />
-                  <T.MeshStandardMaterial map={handleMap} />
+                  <T.MeshStandardMaterial map={handleMap} roughness={0.5} metalness={0.1} />
                 </T.Mesh>
                 <!-- Ручка  двери -->
               </T.Mesh>
@@ -322,6 +359,23 @@
           {/if}
         {/each}
       {/if}
+
+      <!-- Столешница -->
+      <T.Mesh position={[0, model.dimensions.height / 2 + COUNTERTOP_THICKNESS / 2, 0]}>
+        <T.BoxGeometry
+          args={[
+            model.dimensions.width,
+            COUNTERTOP_THICKNESS,
+            model.dimensions.depth + COUNTERTOP_OVERHANG // 20 mm overhang
+          ]}
+        />
+        <T.MeshStandardMaterial
+          map={woodMap}
+          color={new THREE.Color(0x333333)}
+          roughness={0.5}
+          metalness={0.1}
+        />
+      </T.Mesh>
     </T.Group>
   </T.Group>
 {/await}
