@@ -9,10 +9,6 @@
   let { children }: IShelfs = $props()
 
   let init = $state(false)
-
-  $effect(() => {
-    init && console.log('init', init)
-  })
 </script>
 
 <div id="shelfs">

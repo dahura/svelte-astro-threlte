@@ -34,10 +34,6 @@
     class: className
   }: ISettings = $props()
 
-  // $effect(() => {
-  //   console.log(settings.autoRotate)
-  // })
-
   let rotateSpeedArray = $state([settings.rotateSpeed || 0])
   let zoomSpeedArray = $state([settings.zoomSpeed || 0])
   let minPolarAngleArray = $state([settings.minPolarAngle || 0])

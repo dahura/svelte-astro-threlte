@@ -16,7 +16,6 @@
   >
     <div class="w-full h-full">
       <!-- Color Switch Component -->
-
       <!-- Scene Component -->
       <RedactorScene {isChatVisible} />
     </div>

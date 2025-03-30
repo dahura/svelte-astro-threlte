@@ -3,6 +3,7 @@
   import { Gizmo, interactivity, OrbitControls } from '@threlte/extras'
   import { Color } from 'three'
   import type { Snippet } from 'svelte'
+  import PivotPoint from './pivot-point.svelte'
 
   interactivity()
 
@@ -14,6 +15,7 @@
       y: number
       z: number
     }
+
     settings?: {
       autoRotate: boolean
       enableDamping: boolean
@@ -34,14 +36,15 @@
       y: 0,
       z: 0
     },
+
     settings = $bindable({
       autoRotate: false,
       enableDamping: true,
       rotateSpeed: 1,
       zoomToCursor: false,
       zoomSpeed: 1,
-      minPolarAngle: Math.PI * 0.1,
-      maxPolarAngle: Math.PI * 0.5,
+      minPolarAngle: Math.PI / 4,
+      maxPolarAngle: Math.PI * 0.9,
       enableZoom: true
     })
   }: IScene = $props()
@@ -57,15 +60,27 @@
     enableZoom
   } = settings
 
-  $effect(() => {
-    console.log(autoRotate)
-  })
+  $effect(() => {})
+
+  const getSceneHeight = () => {
+    return 2000
+  }
+
+  const pivotOffset = {
+    bottom: getSceneHeight() / 2,
+    center: 0,
+    top: -getSceneHeight() / 2
+  }
 </script>
 
 <class class="w-full h-full" id={sceneId}>
-  <T.PerspectiveCamera makeDefault position={[0, 1500, 2000]} near={0.1} far={10000}>
+  <T.PerspectiveCamera
+    makeDefault
+    position={[position.x, position.y, position.z]}
+    near={0.1}
+    far={17000}
+  >
     <OrbitControls
-      onchange={(e) => console.log(e)}
       {enableDamping}
       {autoRotate}
       {rotateSpeed}
@@ -74,6 +89,8 @@
       {minPolarAngle}
       {maxPolarAngle}
       {enableZoom}
+      minDistance={1000}
+      maxDistance={15000}
     >
       <Gizmo />
     </OrbitControls>
@@ -91,30 +108,9 @@
   <!-- Point Light -->
   <T.PointLight position={[0, 5000, 0]} intensity={0.5} distance={10000} />
 
-  <!-- New Walls -->
-  <!-- <T.Mesh position={[0, 0, -1000]} receiveShadow>
-    <T.PlaneGeometry args={[4000, 2000]} />
-    <T.MeshStandardMaterial color={new Color(0xcccccc)} opacity={0.5} transparent={true} />
-  </T.Mesh>
-
-  <T.Mesh rotation.y={Math.PI / 2} position={[-2000, 0, 0]} receiveShadow>
-    <T.PlaneGeometry args={[4000, 2000]} />
-    <T.MeshStandardMaterial color={new Color(0xcccccc)} />
-  </T.Mesh> -->
-
-  <!-- <T.Mesh rotation.y={-Math.PI / 2} position={[2000, 0, 0]} receiveShadow>
-    <T.PlaneGeometry args={[4000, 2000]} />
-    <T.MeshStandardMaterial color={new Color(0xcccccc)} />
-  </T.Mesh> -->
-
-  <!-- New Floor -->
-  <!-- <T.Mesh rotation.x={-Math.PI / 2} position.y={-1000} receiveShadow>
-    <T.PlaneGeometry args={[4000, 4000]} />
-    <T.MeshStandardMaterial color={new Color(0xcccccc)} />
-  </T.Mesh> -->
-
   <!-- Centered Model -->
-  <T.Group position={[-2000, 0, 0]}>
+
+  <T.Group position={[0, 0, 0]}>
     {@render children?.()}
   </T.Group>
 </class>

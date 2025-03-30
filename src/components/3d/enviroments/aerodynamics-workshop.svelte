@@ -5,10 +5,6 @@
   interface IAerodynamics_Workshop {}
 
   let init = $state(false)
-
-  $effect(() => {
-    init && console.log('init', init)
-  })
 </script>
 
 <!-- <div id="aerodynamics-workshop">

@@ -8,9 +8,6 @@
   import Kitchen1 from './kitchen-1.svelte'
   let init = $state(false)
 
-  $effect(() => {
-    init && console.log('init', init)
-  })
   let settings = $state({
     autoRotate: false,
     enableDamping: true,

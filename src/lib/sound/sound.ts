@@ -3,9 +3,11 @@ type SoundName = string;
 class Sound {
   private static instance: Sound;
   private sounds: Map<SoundName, HTMLAudioElement>;
+  private shownWarnings: Set<string>;
 
   private constructor() {
     this.sounds = new Map();
+    this.shownWarnings = new Set();
   }
 
  
@@ -16,17 +18,24 @@ class Sound {
     return Sound.instance;
   }
 
+  private showWarningOnce(message: string): void {
+    if (!this.shownWarnings.has(message)) {
+      console.warn(message);
+      this.shownWarnings.add(message);
+    }
+  }
+
  
   public loadSound<K extends SoundName>(name: K, url: string): void {
     if (this.sounds.has(name)) {
-      console.warn(`Sound "${name}" is already loaded.`);
+      this.showWarningOnce(`Sound "${name}" is already loaded.`);
       return;
     }
     if (typeof Audio !== 'undefined') {
       const audio = new Audio(url);
       this.sounds.set(name, audio);
     } else {
-      console.warn('Audio API is not available in this environment.');
+      this.showWarningOnce('Audio API is not available in this environment.');
     }
   }
 
@@ -37,7 +46,7 @@ class Sound {
       sound.currentTime = 0; 
       sound.play();
     } else {
-      console.warn(`Sound "${name}" is not loaded.`);
+      this.showWarningOnce(`Sound "${name}" is not loaded.`);
     }
   }
 
@@ -59,6 +68,10 @@ class Sound {
 }
 
 export const sound = Sound.getInstance();
+
+
+
+
 
 
 

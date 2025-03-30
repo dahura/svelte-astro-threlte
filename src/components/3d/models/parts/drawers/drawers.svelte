@@ -3,9 +3,10 @@
   import { T } from '@threlte/core'
   import { onMount } from 'svelte'
   import * as THREE from 'three'
+  import type { GenericModel } from '../../types'
 
   interface IDrawerProps {
-    model: any
+    model: GenericModel
     i: number
     adjustedDrawerSizes: number[]
     drawerPositions: number[]
@@ -59,7 +60,15 @@
 
 {#if adjustedDrawerSizes[i] > 0}
   <T.Group position={[0, getElementPosition(i), drawerPositions[i]]}>
-    <T.Mesh position={[0, 0, model.dimensions.depth / 2]} onclick={() => toggleDrawer(i)}>
+    <!-- Ящик -->
+    <T.Mesh
+      position={[0, 0, model.dimensions.depth / 2]}
+      onclick={(e: Event) => {
+        e.stopPropagation()
+        toggleDrawer(i)
+      }}
+      castShadow
+    >
       <T.BoxGeometry
         args={[
           model.dimensions.width - 4,
@@ -76,13 +85,25 @@
     </T.Mesh>
 
     {#if model.handles}
-      <T.Mesh position={[0, 0, 1]}>
-        <T.BoxGeometry args={[60, 4, 4]} />
-        <T.MeshStandardMaterial map={handleMap} roughness={0.5} metalness={0.1} />
+      <!-- Ручка -->
+      <T.Mesh
+        position={[0, getDrawerHeight(i) / 2, model.dimensions.depth / 2 + 2]}
+        rotation={[Math.PI / 18, 0, 0]}
+        castShadow
+      >
+        <T.BoxGeometry args={[model.dimensions.width * 0.8, 4, 32]} />
+        <T.MeshStandardMaterial color={new THREE.Color(0xcccccc)} roughness={0.5} metalness={0.8} />
+      </T.Mesh>
+
+      <!-- Плоскость для тени -->
+      <T.Mesh position={[0, getDrawerHeight(i) / 2 - 1, model.dimensions.depth / 2]} receiveShadow>
+        <T.PlaneGeometry args={[model.dimensions.width, 32]} />
+        <T.ShadowMaterial opacity={0.5} />
       </T.Mesh>
     {/if}
 
-    <T.Mesh position={[0, -getDrawerHeight(i) / 2 + MATERIAL_THICKNESS / 2, 0]}>
+    <!-- Остальные части ящика -->
+    <T.Mesh position={[0, -getDrawerHeight(i) / 2 + MATERIAL_THICKNESS / 2, 0]} receiveShadow>
       <T.BoxGeometry
         args={[model.dimensions.width - 8, MATERIAL_THICKNESS, model.dimensions.depth - 4]}
       />
@@ -94,7 +115,8 @@
       />
     </T.Mesh>
 
-    <T.Mesh position={[-model.dimensions.width / 2 + MATERIAL_THICKNESS, 0, 0]}>
+    <!-- Правая стенка -->
+    <T.Mesh position={[model.dimensions.width / 2 - MATERIAL_THICKNESS, 0, 0]}>
       <T.BoxGeometry
         args={[
           MATERIAL_THICKNESS,
@@ -110,7 +132,8 @@
       />
     </T.Mesh>
 
-    <T.Mesh position={[model.dimensions.width / 2 - MATERIAL_THICKNESS, 0, 0]}>
+    <!-- Левая стенка (исправлено) -->
+    <T.Mesh position={[-model.dimensions.width / 2 + MATERIAL_THICKNESS, 0, 0]}>
       <T.BoxGeometry
         args={[
           MATERIAL_THICKNESS,

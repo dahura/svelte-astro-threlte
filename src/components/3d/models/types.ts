@@ -1,3 +1,6 @@
+type CabinetType = "lower" | "workspace" | "upper" | "attic" | "tall" | "filler"; // обновлены типы для соответствия группам шкафов
+
+
 interface Dimensions {
     width: number;  // Ширина (20, 30, 40, 45, 50, 60, 80, 90, 100, 120 см)
     height: number;  // Высота корпуса (720, 792, 2016, 2088 мм и т. д.)
@@ -48,16 +51,39 @@ interface Dimensions {
     hiddenStorage?: boolean;  // Скрытые секции или ниши
   }
 
- export interface GenericModelProps {
-    position: {x: number, y: number, z: number};
-    dimensions: Dimensions;
-    doors?: DoorsConfig ;
-    drawers?: DrawersConfig;
-    shelves?: ShelvesConfig;
-    handles?: HandlesConfig; 
-    material: MaterialConfig;
-    specialMechanisms?: SpecialMechanismsConfig;
+  export interface GenericModelPosition {
+    x: number;
+    y: number;
+    z: number;
   }
+
+interface CornerCabinetConfig {
+  angle: number;  // Угол шкафа (обычно 90 градусов)
+  orientation: "left" | "right";  // Ориентация углового шкафа
+  cornerType: "diagonal" | "L-shaped";  // Тип углового шкафа (диагональный или L-образный)
+  cornerSpace: {
+    leftWidth: number;  // Ширина левой стороны
+    rightWidth: number;  // Ширина правой стороны
+  };
+  accessType: "full" | "partial";  // Тип доступа к углу (полный или частичный)
+  cornerMechanism?: {
+    type: "carousel" | "magic-corner" | "lemans" | "none";  // Тип углового механизма
+    rotatable: boolean;  // Возможность вращения механизма
+  };
+}
+
+// Обновляем основной интерфейс
+export interface GenericModel {
+  type: CabinetType;
+  dimensions: Dimensions;
+  cornerConfig?: CornerCabinetConfig;  // Добавляем конфигурацию для углового шкафа
+  doors?: DoorsConfig;
+  drawers?: DrawersConfig;
+  shelves?: ShelvesConfig;
+  handles?: HandlesConfig;
+  material: MaterialConfig;
+  specialMechanisms?: SpecialMechanismsConfig;
+}
   
  
     

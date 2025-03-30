@@ -18,7 +18,7 @@
     <button
       aria-label={`Select ${color} color`}
       type="button"
-      onclick={() => selectColor(color)}
+      onclick={() => selectColor(color as Color)}
       style={`background-color: ${COLORS[color].default}`}
       class={cn(
         // `bg-[${COLORS[color].default}]`,

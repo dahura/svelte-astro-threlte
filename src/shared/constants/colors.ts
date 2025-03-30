@@ -46,9 +46,15 @@ export var COLORS = {
       light_hex: '#00000000',
       dark: 'rgba(0, 0, 0, 0)', // Dark variant (transparent)
       dark_hex: '#00000000' // Dark hex (transparent)
+    },
+    whiteMarble: {
+      default: 'rgba(255, 255, 255, 1)', // Light White Marble
+      default_hex: '#FFFFFF',
+      light: 'rgba(255, 255, 255, 0.9)', // Light variant (made lighter)
+      light_hex: '#FFFFFFE6', // Light hex (made lighter)
+      dark: 'rgba(220, 220, 220, 1)', // Dark variant (made lighter)
+      dark_hex: '#DCDCDC' // Dark hex (made lighter)
     }
   } as const
 
-
-
- export type Color = keyof typeof COLORS
+export type Color = keyof typeof COLORS

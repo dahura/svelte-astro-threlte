@@ -15,7 +15,6 @@
   function onModelLoad(gltf) {
     kitchenModel = gltf.scene
     // Log all interactive objects to find cabinet names
-    console.log('Model structure:', kitchenModel)
   }
 
   // Handle click on cabinet
@@ -24,7 +23,6 @@
     e.stopPropagation()
 
     const cabinetName = e.object.name
-    console.log('Clicked cabinet:', cabinetName)
 
     // Toggle cabinet state
     cabinetStates[cabinetName] = !cabinetStates[cabinetName]

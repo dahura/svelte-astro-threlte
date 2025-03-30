@@ -18,13 +18,15 @@
     zoomSpeed: 1,
     minPolarAngle: 0,
     maxPolarAngle: Math.PI,
-    enableZoom: true
+    enableZoom: true,
+    far: 10000,
+    polarAngle: Math.PI * 0.45
   })
 </script>
 
 <CanvasContainer {isChatVisible}>
-  <Canvas>
-    <Scene sceneId="redactor-scene" bind:settings position={{ x: 0, y: 900, z: 3000 }}>
+  <Canvas colorManagementEnabled={true}>
+    <Scene sceneId="redactor-scene" bind:settings position={{ x: 0, y: 2000, z: 7000 }}>
       <Redactor />
     </Scene>
   </Canvas>
