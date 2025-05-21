@@ -3,7 +3,7 @@
   import { Canvas } from '@threlte/core'
   import { default as CanvasContainer } from './redactor-canvas-container.svelte'
   import Redactor from './redactor.svelte'
-
+  import { WebGLRenderer } from 'three'
   interface RedactorSceneProps {
     isChatVisible: boolean
   }
@@ -22,6 +22,11 @@
     far: 10000,
     polarAngle: Math.PI * 0.45
   })
+
+  // createRenderer={(canvas) => {
+  //     canvas.style.backgroundColor = '#fff'
+  //     return new WebGLRenderer({ canvas, stencil: true })
+  //   }}
 </script>
 
 <CanvasContainer {isChatVisible}>

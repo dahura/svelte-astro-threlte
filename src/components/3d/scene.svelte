@@ -54,7 +54,7 @@
   <!-- <T.MeshStandardMaterial color="hotpink" /> -->
   <Suspense>
     {#snippet fallback()}
-      <div class="w-full h-full bg-black">loading...</div>
+      <div class="w-full h-full">loading...</div>
     {/snippet}
     <!-- <Environment url="/hdr/aerodynamics_workshop_1k.hdr" /> -->
     <AerodynamicsWorkshopEnvironment />

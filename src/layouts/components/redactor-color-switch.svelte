@@ -23,9 +23,9 @@
       class={cn(
         // `bg-[${COLORS[color].default}]`,
         // `bg-[${COLORS[color].default_hex}]`,
-
+        `bg-[${COLORS[color].default}]`,
         'w-12 h-12 inline-block m-1 cursor-pointer',
-        $colors.currentColor === color && `border-2 border-[${COLORS[color].dark_hex}]`
+        $colors.currentColor === color && `border-4 border-[${COLORS[color].dark_hex}]`
       )}
     >
     </button>

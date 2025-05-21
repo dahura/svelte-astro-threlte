@@ -1,7 +1,7 @@
 <script lang="ts">
   import { toggleDrawerAnimation } from '$/components/3d/motions/drawer/toggle-drawer.svelte'
   import { T } from '@threlte/core'
-  import { onMount } from 'svelte'
+  import { onMount, createEventDispatcher } from 'svelte'
   import * as THREE from 'three'
   import type { GenericModel } from '../../types'
 
@@ -10,8 +10,8 @@
     i: number
     adjustedDrawerSizes: number[]
     drawerPositions: number[]
-    woodMap: THREE.Texture
-    handleMap: THREE.Texture
+    texture: THREE.Texture
+    texture_color: THREE.ColorRepresentation
     MATERIAL_THICKNESS: number
     FACADE_THICKNESS: number
   }
@@ -21,25 +21,89 @@
     i,
     adjustedDrawerSizes,
     drawerPositions,
-    woodMap,
-    handleMap,
+    texture,
+    texture_color,
     MATERIAL_THICKNESS,
     FACADE_THICKNESS
   }: IDrawerProps = $props()
 
   const { toggleDrawer: toggle } = toggleDrawerAnimation()
+  const dispatch = createEventDispatcher<{
+    updateDrawerPosition: { index: number; value: number }
+  }>()
+
+  // Флаг для предотвращения множественных кликов
+  let isAnimating = false
+
+  // Кэшируем геометрию для оптимизации
+  const drawerGeometries = {
+    front: null as THREE.BoxGeometry | null,
+    side: null as THREE.BoxGeometry | null,
+    bottom: null as THREE.BoxGeometry | null,
+    back: null as THREE.BoxGeometry | null
+  }
+
+  // Создаем геометрии только один раз для повторного использования
+  function createGeometries() {
+    if (!adjustedDrawerSizes[i]) return
+
+    const drawerHeight = getDrawerHeight(i)
+
+    if (!drawerGeometries.front) {
+      drawerGeometries.front = new THREE.BoxGeometry(
+        model.dimensions.width - 4,
+        drawerHeight - MATERIAL_THICKNESS,
+        FACADE_THICKNESS
+      )
+    }
+
+    if (!drawerGeometries.side) {
+      drawerGeometries.side = new THREE.BoxGeometry(
+        MATERIAL_THICKNESS,
+        drawerHeight - MATERIAL_THICKNESS,
+        model.dimensions.depth - 4
+      )
+    }
+
+    if (!drawerGeometries.bottom) {
+      drawerGeometries.bottom = new THREE.BoxGeometry(
+        model.dimensions.width - 8,
+        MATERIAL_THICKNESS,
+        model.dimensions.depth - 4
+      )
+    }
+
+    if (!drawerGeometries.back) {
+      drawerGeometries.back = new THREE.BoxGeometry(
+        model.dimensions.width - 8,
+        drawerHeight - MATERIAL_THICKNESS,
+        MATERIAL_THICKNESS
+      )
+    }
+  }
 
   async function toggleDrawer(index: number) {
     const isOpen = drawerPositions[index] > 0
     const targetPosition = isOpen ? 0 : model.dimensions.depth / 2
 
+    // Создаем локальную копию для анимации
+    let currentPosition = drawerPositions[index]
+
+    // Предотвращаем множественные клики
+    if (isAnimating) return
+
+    isAnimating = true
+
     await toggle({
-      from: drawerPositions[index],
+      from: currentPosition,
       to: targetPosition,
       onUpdate: (value) => {
-        drawerPositions[index] = value
+        // Вместо прямого изменения массива отправляем событие
+        dispatch('updateDrawerPosition', { index, value })
       }
     })
+
+    isAnimating = false
   }
 
   function getElementPosition(index: number): number {
@@ -55,7 +119,9 @@
     return adjustedDrawerSizes[index] ?? 0
   }
 
-  onMount(() => {})
+  onMount(() => {
+    createGeometries()
+  })
 </script>
 
 {#if adjustedDrawerSizes[i] > 0}
@@ -77,10 +143,10 @@
         ]}
       />
       <T.MeshStandardMaterial
-        map={woodMap}
-        color={new THREE.Color(0x333333)}
-        roughness={0.5}
-        metalness={0.1}
+        map={texture}
+        color={new THREE.Color(texture_color)}
+        roughness={0.7}
+        metalness={0.05}
       />
     </T.Mesh>
 
@@ -108,10 +174,10 @@
         args={[model.dimensions.width - 8, MATERIAL_THICKNESS, model.dimensions.depth - 4]}
       />
       <T.MeshStandardMaterial
-        map={woodMap}
-        color={new THREE.Color(0x333333)}
-        roughness={0.5}
-        metalness={0.1}
+        map={texture}
+        color={new THREE.Color(texture_color)}
+        roughness={0.7}
+        metalness={0.05}
       />
     </T.Mesh>
 
@@ -125,10 +191,10 @@
         ]}
       />
       <T.MeshStandardMaterial
-        map={woodMap}
-        color={new THREE.Color(0x333333)}
-        roughness={0.5}
-        metalness={0.1}
+        map={texture}
+        color={new THREE.Color(texture_color)}
+        roughness={0.7}
+        metalness={0.05}
       />
     </T.Mesh>
 
@@ -142,10 +208,10 @@
         ]}
       />
       <T.MeshStandardMaterial
-        map={woodMap}
-        color={new THREE.Color(0x333333)}
-        roughness={0.5}
-        metalness={0.1}
+        map={texture}
+        color={new THREE.Color(texture_color)}
+        roughness={0.7}
+        metalness={0.05}
       />
     </T.Mesh>
 
@@ -158,11 +224,18 @@
         ]}
       />
       <T.MeshStandardMaterial
-        map={woodMap}
-        color={new THREE.Color(0x333333)}
-        roughness={0.5}
-        metalness={0.1}
+        map={texture}
+        color={new THREE.Color(texture_color)}
+        roughness={0.7}
+        metalness={0.05}
       />
     </T.Mesh>
+
+    <!-- Один оптимизированный свет вместо трех -->
+    <T.DirectionalLight
+      position={[model.dimensions.width, 0, model.dimensions.depth / 2]}
+      intensity={1.0}
+      castShadow={false}
+    />
   </T.Group>
 {/if}

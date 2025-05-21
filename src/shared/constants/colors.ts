@@ -54,6 +54,62 @@ export var COLORS = {
       light_hex: '#FFFFFFE6', // Light hex (made lighter)
       dark: 'rgba(220, 220, 220, 1)', // Dark variant (made lighter)
       dark_hex: '#DCDCDC' // Dark hex (made lighter)
+    },
+    metalWhite: {
+      default: 'rgba(230, 230, 230, 1)', // Metal White
+      default_hex: '#E6E6E6',
+      light: 'rgba(245, 245, 245, 1)', // Light variant
+      light_hex: '#F5F5F5',
+      dark: 'rgba(200, 200, 200, 1)', // Dark variant
+      dark_hex: '#C8C8C8' // Dark hex
+    },
+    woodenLight: {
+      default: 'rgba(222, 184, 135, 1)', // Light Wood
+      default_hex: '#DEB887',
+      light: 'rgba(245, 222, 179, 1)', // Lighter variant
+      light_hex: '#F5DEB3',
+      dark: 'rgba(184, 134, 11, 1)', // Darker variant
+      dark_hex: '#B8860B' // Dark hex
+    },
+    woodenDark: {
+      default: 'rgba(139, 69, 19, 1)', // Dark Wood
+      default_hex: '#8B4513',
+      light: 'rgba(160, 82, 45, 1)', // Lighter variant
+      light_hex: '#A0522D',
+      dark: 'rgba(101, 50, 10, 1)', // Darker variant
+      dark_hex: '#65320A' // Dark hex
+    },
+    woodenCountertopWhite: {
+      default: 'rgba(245, 245, 240, 1)', // Countertop White Wood
+      default_hex: '#F5F5F0',
+      light: 'rgba(255, 255, 250, 1)', // Lighter variant
+      light_hex: '#FFFFFA',
+      dark: 'rgba(220, 220, 210, 1)', // Darker variant
+      dark_hex: '#DCDCD2' // Dark hex
+    },
+    counterTopStoneWhite: {
+      default: 'rgba(240, 240, 235, 1)', // Countertop Stone White
+      default_hex: '#F0F0EB',
+      light: 'rgba(255, 255, 245, 1)', // Lighter variant
+      light_hex: '#FFFFF5',
+      dark: 'rgba(210, 210, 200, 1)', // Darker variant
+      dark_hex: '#D2D2C8' // Dark hex
+    },
+    wallWhite: {
+      default: 'rgba(250, 250, 250, 1)', // Wall White
+      default_hex: '#FAFAFA',
+      light: 'rgba(255, 255, 255, 1)', // Lighter variant
+      light_hex: '#FFFFFF',
+      dark: 'rgba(220, 220, 220, 1)', // Darker variant
+      dark_hex: '#DCDCDC' // Dark hex
+    },
+    wall: {
+      default: 'rgba(230, 230, 220, 1)', // Wall
+      default_hex: '#E6E6DC',
+      light: 'rgba(245, 245, 235, 1)', // Lighter variant
+      light_hex: '#F5F5EB',
+      dark: 'rgba(200, 200, 190, 1)', // Darker variant
+      dark_hex: '#C8C8BE' // Dark hex
     }
   } as const
 

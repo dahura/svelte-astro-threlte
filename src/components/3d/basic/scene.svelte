@@ -1,7 +1,7 @@
 <script lang="ts">
   import { T } from '@threlte/core'
   import { Gizmo, interactivity, OrbitControls } from '@threlte/extras'
-  import { Color } from 'three'
+  import { Color, PCFSoftShadowMap } from 'three'
   import type { Snippet } from 'svelte'
   import PivotPoint from './pivot-point.svelte'
 
@@ -96,20 +96,33 @@
     </OrbitControls>
   </T.PerspectiveCamera>
 
-  <!-- Ambient Light -->
-  <T.AmbientLight intensity={0.3} />
+  <!-- Ambient Light (увеличиваем базовую яркость) -->
+  <T.AmbientLight intensity={0.5} />
 
-  <!-- Directional Light -->
-  <T.DirectionalLight position={[0, 5000, 5000]} intensity={1.5} castShadow />
+  <!-- Один главный направленный свет с оптимизированными тенями -->
+  <T.DirectionalLight
+    position={[0, 5000, 5000]}
+    intensity={1.2}
+    castShadow
+    shadow-mapSize-width={1024}
+    shadow-mapSize-height={1024}
+    shadow-camera-near={1}
+    shadow-camera-far={10000}
+    shadow-camera-left={-5000}
+    shadow-camera-right={5000}
+    shadow-camera-top={5000}
+    shadow-camera-bottom={-5000}
+  />
 
-  <!-- Additional Directional Light for Accents -->
-  <T.DirectionalLight position={[-5000, 3000, 5000]} intensity={0.8} color={0xffeedd} />
-
-  <!-- Point Light -->
-  <T.PointLight position={[0, 5000, 0]} intensity={0.5} distance={10000} />
+  <!-- Дополнительный боковой свет для правой стороны шкафов -->
+  <T.DirectionalLight
+    position={[5000, 3000, 0]}
+    intensity={0.8}
+    color={0xffffff}
+    castShadow={false}
+  />
 
   <!-- Centered Model -->
-
   <T.Group position={[0, 0, 0]}>
     {@render children?.()}
   </T.Group>

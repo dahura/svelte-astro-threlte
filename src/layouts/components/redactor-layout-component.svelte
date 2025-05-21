@@ -3,6 +3,7 @@
   import RedactorChat from './redactor-chat.svelte'
   import RedactorColorSwitch from './redactor-color-switch.svelte'
   import RedactorScene from './redactor-scene.svelte'
+  import RedactorTextureSwitcher from './redactor-texture-switcher.svelte'
 
   let isChatVisible = $state(true)
 </script>
@@ -11,7 +12,7 @@
   <!-- Main content area with scene -->
 
   <div
-    class="absolute inset-0 transition-transform duration-150 ease-in-out bg-background"
+    class="absolute inset-0 transition-transform duration-150 ease-in-out"
     style={isChatVisible ? 'transform: translateY(0)' : 'transform: translateY(0)'}
   >
     <div class="w-full h-full">
@@ -24,7 +25,8 @@
   <!-- Chat Toggle Button -->
   <RedactorChatToggleButton bind:isChatVisible />
   <div class="absolute top-0 left-0">
-    <RedactorColorSwitch />
+    <!-- <RedactorColorSwitch /> -->
+    <RedactorTextureSwitcher />
   </div>
 
   <!-- AI Chat Section -->

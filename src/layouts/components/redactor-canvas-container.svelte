@@ -10,7 +10,7 @@
 </script>
 
 <div
-  class="absolute inset-0 transition-all duration-150 ease-in-out bg-background"
+  class="absolute inset-0 transition-all duration-150 ease-in-out"
   style={isChatVisible ? 'bottom: 20rem' : 'bottom: 0'}
 >
   <div class="w-full h-full">

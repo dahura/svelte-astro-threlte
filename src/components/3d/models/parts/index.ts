@@ -1,3 +1,3 @@
-export {default as Door} from './door.svelte'
-export {default as Shelf} from './shelf.svelte'
-export {default as Drawer} from './drawer.svelte'
+export {default as Doors} from './doors/doors.svelte'
+export {default as Shelfs} from './shelfs/shelfs.svelte'
+export {default as Drawer} from './drawers/drawers.svelte'

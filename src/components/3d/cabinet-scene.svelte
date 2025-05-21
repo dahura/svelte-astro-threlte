@@ -92,7 +92,7 @@
 >
   <Suspense>
     {#snippet fallback()}
-      <div class="w-full h-full bg-black">loading...</div>
+      <div class="w-full h-full">loading...</div>
     {/snippet}
     <RenderCabinet {cabinet} />
     <AerodynamicsWorkshopEnvironment />

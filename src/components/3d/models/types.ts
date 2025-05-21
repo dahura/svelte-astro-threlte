@@ -57,26 +57,25 @@ interface Dimensions {
     z: number;
   }
 
-interface CornerCabinetConfig {
-  angle: number;  // Угол шкафа (обычно 90 градусов)
-  orientation: "left" | "right";  // Ориентация углового шкафа
-  cornerType: "diagonal" | "L-shaped";  // Тип углового шкафа (диагональный или L-образный)
-  cornerSpace: {
-    leftWidth: number;  // Ширина левой стороны
-    rightWidth: number;  // Ширина правой стороны
-  };
-  accessType: "full" | "partial";  // Тип доступа к углу (полный или частичный)
-  cornerMechanism?: {
-    type: "carousel" | "magic-corner" | "lemans" | "none";  // Тип углового механизма
-    rotatable: boolean;  // Возможность вращения механизма
-  };
+// Обновляем конфигурацию углового шкафа
+interface CornerConfig {
+    shelfCount: number;
+    adjustableShelves: boolean;
+    isCorner: boolean;  // Является ли шкаф угловым
+    cornerDepth: number;  // Глубина угловой части
+    orientation: "left" | "right";  // Ориентация углового шкафа
+    cornerType: "diagonal" | "L-shaped";  // Тип углового шкафа
+    mechanism?: {
+        type: "carousel" | "magic-corner" | "lemans" | "none" | "rotating-drawer";
+        rotatable: boolean;
+    };
 }
 
 // Обновляем основной интерфейс
 export interface GenericModel {
   type: CabinetType;
   dimensions: Dimensions;
-  cornerConfig?: CornerCabinetConfig;  // Добавляем конфигурацию для углового шкафа
+  corner?: CornerConfig;  // конфигурация для углового шкафа
   doors?: DoorsConfig;
   drawers?: DrawersConfig;
   shelves?: ShelvesConfig;

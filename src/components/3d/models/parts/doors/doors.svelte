@@ -6,11 +6,11 @@
 
   interface Props {
     model: GenericModel
-    woodMap: THREE.Texture
-    handleMap: THREE.Texture
+    texture: THREE.Texture
+    texture_color: THREE.ColorRepresentation
   }
 
-  let { model, woodMap, handleMap }: Props = $props()
+  let { model, texture, texture_color }: Props = $props()
 
   const DOOR_THICKNESS = 2
   const MATERIAL_THICKNESS = 12
@@ -24,20 +24,23 @@
       <T.Group
         position={[-model.dimensions.width / 2 + MATERIAL_THICKNESS, 0, model.dimensions.depth / 2]}
         rotation.y={$leftDoorRotation}
+        onclick={() => {
+          console.log('left door clicked')
+        }}
       >
         <T.Mesh position={[model.dimensions.width / 4, 0, 0]} onclick={toggleLeft}>
           <T.BoxGeometry
             args={[model.dimensions.width / 2, model.dimensions.height - 2, DOOR_THICKNESS]}
           />
           <T.MeshStandardMaterial
-            map={woodMap}
-            color={new THREE.Color(0x333333)}
+            map={texture}
+            color={new THREE.Color(texture_color)}
             roughness={0.5}
             metalness={0.1}
           />
           <T.Mesh position={[model.dimensions.width / 4 - 5, 0, 1]}>
             <T.BoxGeometry args={[9, 60, 4]} />
-            <T.MeshStandardMaterial map={handleMap} roughness={0.5} metalness={0.1} />
+            <T.MeshStandardMaterial map={texture} roughness={0.5} metalness={0.1} />
           </T.Mesh>
         </T.Mesh>
       </T.Group>
@@ -51,14 +54,14 @@
             args={[model.dimensions.width / 2, model.dimensions.height - 2, DOOR_THICKNESS]}
           />
           <T.MeshStandardMaterial
-            map={woodMap}
-            color={new THREE.Color(0x333333)}
+            map={texture}
+            color={new THREE.Color(texture_color)}
             roughness={0.5}
             metalness={0.1}
           />
           <T.Mesh position={[-model.dimensions.width / 4 + 5, 0, 1]}>
             <T.BoxGeometry args={[9, 60, 4]} />
-            <T.MeshStandardMaterial map={handleMap} roughness={0.5} metalness={0.1} />
+            <T.MeshStandardMaterial map={texture} roughness={0.5} metalness={0.1} />
           </T.Mesh>
         </T.Mesh>
       </T.Group>
@@ -73,14 +76,14 @@
             args={[model.dimensions.width, model.dimensions.height - 2, DOOR_THICKNESS]}
           />
           <T.MeshStandardMaterial
-            map={woodMap}
-            color={new THREE.Color(0x333333)}
+            map={texture}
+            color={new THREE.Color(texture_color)}
             roughness={0.5}
             metalness={0.1}
           />
           <T.Mesh position={[-model.dimensions.width / 2 + 5, 0, 1]}>
             <T.BoxGeometry args={[9, 60, 4]} />
-            <T.MeshStandardMaterial map={handleMap} roughness={0.5} metalness={0.1} />
+            <T.MeshStandardMaterial map={texture} roughness={0.5} metalness={0.1} />
           </T.Mesh>
         </T.Mesh>
       </T.Group>

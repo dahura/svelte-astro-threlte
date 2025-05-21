@@ -32,10 +32,9 @@
   const gapX = 50
 
   export const cabinets: GenericModelProps[] = [
-    // нижние шкафы
+    //нижние шкафы
     {
       type: 'lower',
-
       dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
       material: {
         finish: 'wood-texture'
@@ -47,22 +46,19 @@
     },
     {
       type: 'lower',
-
       dimensions: { width: 800, height: 920, depth: 561, plinthHeight: 150 },
       material: {
         finish: 'wood-texture'
       }, // Sienna
       specialMechanisms: { softCloseHinges: true },
       // shelves: { count: 0, adjustable: true, material: 'wood' },
-
       doors: { count: 1, type: 'hinged' }
     },
     {
       type: 'lower',
-
       dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
       // shelves: { count: 3, adjustable: true, material: 'wood' },
-      drawers: { count: 2, sizes: [360, 360, 200], withSoftClose: false },
+      drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
       handles: { modelId: 'handle-1', position: 'side' },
       material: {
         finish: 'wood-texture'
@@ -70,7 +66,6 @@
     },
     {
       type: 'lower',
-
       dimensions: { width: 900, height: 920, depth: 561, plinthHeight: 150 },
       shelves: { count: 3, adjustable: true, material: 'wood' },
       drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
@@ -81,7 +76,6 @@
     },
     {
       type: 'lower',
-
       dimensions: { width: 400, height: 920, depth: 561, plinthHeight: 150 },
       shelves: { count: 3, adjustable: true, material: 'wood' },
       drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
@@ -92,7 +86,6 @@
     },
     {
       type: 'tall',
-
       dimensions: { width: 600, height: 2400, depth: 561, plinthHeight: 150 },
       shelves: { count: 5, adjustable: true, material: 'wood' },
       drawers: { count: 5, sizes: [360, 360, 0, 600, 300], withSoftClose: false },
@@ -104,7 +97,6 @@
     // верхние шкафы
     {
       type: 'upper',
-
       dimensions: { width: 800, height: 920, depth: 300 },
       material: {
         finish: 'wood-texture'
@@ -125,7 +117,6 @@
     },
     {
       type: 'upper',
-
       dimensions: { width: 800, height: 920, depth: 300 },
       material: {
         finish: 'wood-texture'
@@ -135,15 +126,36 @@
     },
     {
       type: 'upper',
-
       dimensions: { width: 900, height: 920, depth: 300 },
+      shelves: { count: 2, adjustable: true, material: 'wood' },
       material: {
         // SaddleBrown
         finish: 'wood-texture'
       },
-      doors: { count: 1, type: 'hinged' },
-      shelves: { count: 2, adjustable: true, material: 'wood' }
+      doors: { count: 1, type: 'hinged' }
     }
+    // Угловой шкаф
+    // {
+    //   type: 'lower',
+    //   dimensions: { width: 900, height: 920, depth: 900, plinthHeight: 150 },
+    //   corner: {
+    //     shelfCount: 2,
+    //     adjustableShelves: true,
+    //     isCorner: true,
+    //     cornerDepth: 900,
+    //     orientation: 'left', // or 'right', depending on your design
+    //     cornerType: 'L-shaped', // or 'diagonal'
+    //     mechanism: {
+    //       type: 'carousel',
+    //       rotatable: true
+    //     }
+    //   },
+    //   material: {
+    //     finish: 'wood-texture'
+    //   },
+    //   shelves: { count: 2, adjustable: true, material: 'wood' },
+    //   handles: { modelId: 'handle-1', position: 'side' }
+    // }
   ]
 
   const gapY = 10
@@ -217,7 +229,7 @@
   const calculateUpperCabinetPosition = (cabinets: GenericModelProps[]) => {
     const tallHeight = getTallCabinetHeight(cabinets)
     const upperHeight = getUpperCabinetHeight(cabinets)
-    return tallHeight - upperHeight + PLINTH_HEIGHT
+    return tallHeight - upperHeight
   }
 
   // Константы для размеров шкафов по умолчанию
@@ -232,6 +244,10 @@
       cabinets.find((c) => c.type === 'upper')?.dimensions.depth || DEFAULT_UPPER_CABINET_DEPTH
     return (upperCabinetDepth - lowerCabinetDepth) / 2
   }
+
+  // Agregar ejemplos de armarios de rincón basados en la imagen
+
+  // Añadir estos muebles a tu array principal de muebles disponibles
 </script>
 
 <T.Group>
@@ -249,7 +265,7 @@
     <!-- Столешница -->
     {#await Promise.all( [countertopTexture, countertopTextureStone] ) then [countertopMap, countertopMapStone]}
       <T.Mesh
-        position.y={BASE_CABINET_HEIGHT + PLINTH_HEIGHT + COUNTERTOP_THICKNESS / 2}
+        position.y={BASE_CABINET_HEIGHT + COUNTERTOP_THICKNESS / 2}
         position.x={totalWidthOfLowerCabinets / 2}
         position.z={COUNTERTOP_OVERHANG / 2}
       >

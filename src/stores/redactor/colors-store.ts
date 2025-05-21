@@ -11,8 +11,19 @@ const colorsStore = createStoreFactory<IColors>({
   availableColors: Object.keys(COLORS) as Color[],
 })
 
-export const modelColorsStore = colorsStore('model-colors')
 
+export var modelColorsStore = colorsStore('model-colors')
+
+export var setColor = (color: Color) => {
+  modelColorsStore.update((state) => ({
+    ...state,
+    currentColor: color
+  }))
+}
+
+export var getColor = () => {
+  return modelColorsStore.get().currentColor
+}
 
 
 
