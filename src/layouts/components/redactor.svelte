@@ -3,8 +3,10 @@
   import GenericModel from '$/components/3d/models/generic-model.svelte'
   import type { GenericModel as GenericModelProps } from '$/components/3d/models/types'
   import { modelColorsStore } from '$/stores/redactor/colors-store'
+  import { modelCabinetsStore } from '$/stores/redactor/cabinets-store'
   import { COLORS } from '$/shared/constants/colors'
   import { onMount } from 'svelte'
+  import { get } from 'svelte/store'
   import { T } from '@threlte/core'
   import * as THREE from 'three'
   import { useTexture } from '@threlte/extras'
@@ -12,7 +14,10 @@
 
   // 4 группы шкафов нижние, столешница, шкафы рабочей зоны, верхние, , шкафы антресоли
 
-  const colors = modelColorsStore.$get
+  const colors = $modelColorsStore
+  const storeCabinets = modelCabinetsStore
+
+  const cabinets = modelCabinetsStore.$get
 
   const countertopTexture = useTexture('textures/4k/wooden-countertop-white.jpg', {
     transform: (texture) => {
@@ -31,133 +36,6 @@
 
   const gapX = 50
 
-  export const cabinets: GenericModelProps[] = [
-    //нижние шкафы
-    {
-      type: 'lower',
-      dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
-      material: {
-        finish: 'wood-texture'
-      },
-      specialMechanisms: { softCloseHinges: true },
-      shelves: { count: 3, adjustable: true, material: 'wood' },
-      handles: { modelId: 'handle-1', position: 'side' },
-      drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false } // Adjusted sizes for the drawers to not exceed cabinet height
-    },
-    {
-      type: 'lower',
-      dimensions: { width: 800, height: 920, depth: 561, plinthHeight: 150 },
-      material: {
-        finish: 'wood-texture'
-      }, // Sienna
-      specialMechanisms: { softCloseHinges: true },
-      // shelves: { count: 0, adjustable: true, material: 'wood' },
-      doors: { count: 1, type: 'hinged' }
-    },
-    {
-      type: 'lower',
-      dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
-      // shelves: { count: 3, adjustable: true, material: 'wood' },
-      drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
-      handles: { modelId: 'handle-1', position: 'side' },
-      material: {
-        finish: 'wood-texture'
-      } // Chocolate
-    },
-    {
-      type: 'lower',
-      dimensions: { width: 900, height: 920, depth: 561, plinthHeight: 150 },
-      shelves: { count: 3, adjustable: true, material: 'wood' },
-      drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
-      handles: { modelId: 'handle-1', position: 'side' },
-      material: {
-        finish: 'wood-texture'
-      }
-    },
-    {
-      type: 'lower',
-      dimensions: { width: 400, height: 920, depth: 561, plinthHeight: 150 },
-      shelves: { count: 3, adjustable: true, material: 'wood' },
-      drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
-      handles: { modelId: 'handle-1', position: 'side' },
-      material: {
-        finish: 'wood-texture'
-      }
-    },
-    {
-      type: 'tall',
-      dimensions: { width: 600, height: 2400, depth: 561, plinthHeight: 150 },
-      shelves: { count: 5, adjustable: true, material: 'wood' },
-      drawers: { count: 5, sizes: [360, 360, 0, 600, 300], withSoftClose: false },
-      handles: { modelId: 'handle-1', position: 'side' },
-      material: {
-        finish: 'wood-texture'
-      }
-    },
-    // верхние шкафы
-    {
-      type: 'upper',
-      dimensions: { width: 800, height: 920, depth: 300 },
-      material: {
-        finish: 'wood-texture'
-      },
-      doors: { count: 2, type: 'hinged' },
-      shelves: { count: 2, adjustable: true, material: 'wood' }
-    },
-    {
-      type: 'upper',
-      dimensions: { width: 800, height: 920, depth: 300 },
-      material: {
-        finish: 'wood-texture',
-        facadeColor: 'rgba(0, 0, 0, 1)', // black
-        carcassColor: 'rgba(101, 67, 33, 1)' // darkbrown
-      },
-      doors: { count: 1, type: 'hinged' },
-      shelves: { count: 2, adjustable: true, material: 'wood' }
-    },
-    {
-      type: 'upper',
-      dimensions: { width: 800, height: 920, depth: 300 },
-      material: {
-        finish: 'wood-texture'
-      },
-      doors: { count: 1, type: 'hinged' },
-      shelves: { count: 2, adjustable: true, material: 'wood' }
-    },
-    {
-      type: 'upper',
-      dimensions: { width: 900, height: 920, depth: 300 },
-      shelves: { count: 2, adjustable: true, material: 'wood' },
-      material: {
-        // SaddleBrown
-        finish: 'wood-texture'
-      },
-      doors: { count: 1, type: 'hinged' }
-    }
-    // Угловой шкаф
-    // {
-    //   type: 'lower',
-    //   dimensions: { width: 900, height: 920, depth: 900, plinthHeight: 150 },
-    //   corner: {
-    //     shelfCount: 2,
-    //     adjustableShelves: true,
-    //     isCorner: true,
-    //     cornerDepth: 900,
-    //     orientation: 'left', // or 'right', depending on your design
-    //     cornerType: 'L-shaped', // or 'diagonal'
-    //     mechanism: {
-    //       type: 'carousel',
-    //       rotatable: true
-    //     }
-    //   },
-    //   material: {
-    //     finish: 'wood-texture'
-    //   },
-    //   shelves: { count: 2, adjustable: true, material: 'wood' },
-    //   handles: { modelId: 'handle-1', position: 'side' }
-    // }
-  ]
-
   const gapY = 10
 
   const isEven = (index: number) => index % 2 === 0
@@ -165,7 +43,7 @@
   const SIDE_WALL_THICKNESS = 16
 
   const calculatePositionsX = (cabinets: GenericModelProps[], type: 'lower' | 'upper') => {
-    const filteredCabinets = cabinets.filter((cabinet) =>
+    const filteredCabinets = cabinets.filter((cabinet: GenericModelProps) =>
       type === 'lower' ? cabinet.type === 'lower' || cabinet.type === 'tall' : cabinet.type === type
     )
 
@@ -184,25 +62,35 @@
     }, [])
   }
 
-  const lowerPositionsX = calculatePositionsX(cabinets, 'lower')
-  const upperPositionsX = calculatePositionsX(cabinets, 'upper')
+  $: lowerPositionsX = $cabinets?.cabinets ? calculatePositionsX($cabinets.cabinets, 'lower') : []
+  $: upperPositionsX = $cabinets?.cabinets ? calculatePositionsX($cabinets.cabinets, 'upper') : []
 
-  const totalWidthOfUpperCabinets = cabinets
-    .filter(({ type }) => type === 'upper')
-    .reduce((totalWidth, cabinet) => totalWidth + cabinet.dimensions.width, 0)
+  $: totalWidthOfUpperCabinets = $cabinets?.cabinets
+    ? $cabinets.cabinets
+        .filter((cabinet: GenericModelProps) => cabinet.type === 'upper')
+        .reduce(
+          (totalWidth: number, cabinet: GenericModelProps) => totalWidth + cabinet.dimensions.width,
+          0
+        )
+    : 0
 
-  const totalWidthOfLowerCabinets = cabinets
-    .filter(({ type }) => type === 'lower')
-    .reduce((totalWidth, cabinet) => totalWidth + cabinet.dimensions.width, 0)
+  $: totalWidthOfLowerCabinets = $cabinets?.cabinets
+    ? $cabinets.cabinets
+        .filter((cabinet: GenericModelProps) => cabinet.type === 'lower')
+        .reduce(
+          (totalWidth: number, cabinet: GenericModelProps) => totalWidth + cabinet.dimensions.width,
+          0
+        )
+    : 0
 
   const calculateCountertopWidth = (cabinets: GenericModelProps[]) =>
     cabinets.reduce(
-      (totalWidth, cabinet) =>
+      (totalWidth: number, cabinet: GenericModelProps) =>
         totalWidth + (cabinet.type === 'lower' ? cabinet.dimensions.width : 0),
       0
     )
 
-  const counterTopWidth = calculateCountertopWidth(cabinets)
+  $: counterTopWidth = $cabinets?.cabinets ? calculateCountertopWidth($cabinets.cabinets) : 0
 
   const COUNTERTOP_THICKNESS = 20 // Толщина столешницы
   const PLINTH_HEIGHT = 150 // Высота цоколя
@@ -215,35 +103,34 @@
 
   // Находим высокий шкаф для определения общей высоты
   const getTallCabinetHeight = (cabinets: GenericModelProps[]) => {
-    const tallCabinet = cabinets.find((cabinet) => cabinet.dimensions.height === 2400)
+    const tallCabinet = cabinets.find(
+      (cabinet: GenericModelProps) => cabinet.dimensions.height === 2400
+    )
     return tallCabinet?.dimensions.height ?? DEFAULT_TALL_CABINET_HEIGHT
   }
 
   // Находим стандартную высоту верхнего шкафа
   const getUpperCabinetHeight = (cabinets: GenericModelProps[]) => {
-    const upperCabinet = cabinets.find((cabinet) => cabinet.type === 'upper')
+    const upperCabinet = cabinets.find((cabinet: GenericModelProps) => cabinet.type === 'upper')
     return upperCabinet?.dimensions.height ?? DEFAULT_UPPER_CABINET_HEIGHT
   }
 
   // Вычисляем высоту для верхних шкафов динамически
-  const calculateUpperCabinetPosition = (cabinets: GenericModelProps[]) => {
-    const tallHeight = getTallCabinetHeight(cabinets)
-    const upperHeight = getUpperCabinetHeight(cabinets)
-    return tallHeight - upperHeight
-  }
+  $: calculateUpperCabinetPositionValue = $cabinets?.cabinets
+    ? getTallCabinetHeight($cabinets.cabinets) - getUpperCabinetHeight($cabinets.cabinets)
+    : 0
 
   // Константы для размеров шкафов по умолчанию
   const DEFAULT_LOWER_CABINET_DEPTH = 561
   const DEFAULT_UPPER_CABINET_DEPTH = 300
 
-  const calculateUpperCabinetZOffset = (cabinets: GenericModelProps[]) => {
-    const lowerCabinetDepth =
-      cabinets.find((c) => c.type === 'lower' || c.type === 'tall')?.dimensions.depth ||
-      DEFAULT_LOWER_CABINET_DEPTH
-    const upperCabinetDepth =
-      cabinets.find((c) => c.type === 'upper')?.dimensions.depth || DEFAULT_UPPER_CABINET_DEPTH
-    return (upperCabinetDepth - lowerCabinetDepth) / 2
-  }
+  $: calculateUpperCabinetZOffsetValue = $cabinets?.cabinets
+    ? (($cabinets.cabinets.find((c: GenericModelProps) => c.type === 'upper')?.dimensions.depth ||
+        DEFAULT_UPPER_CABINET_DEPTH) -
+        ($cabinets.cabinets.find((c: GenericModelProps) => c.type === 'lower' || c.type === 'tall')
+          ?.dimensions.depth || DEFAULT_LOWER_CABINET_DEPTH)) /
+      2
+    : 0
 
   // Agregar ejemplos de armarios de rincón basados en la imagen
 
@@ -253,14 +140,16 @@
 <T.Group>
   <!-- Нижние шкафы -->
   <T.Group position.x={-totalWidthOfLowerCabinets / 2}>
-    {#each cabinets.filter((c) => c.type === 'lower' || c.type === 'tall') as model, index}
-      {@const positionIndex = cabinets
-        .filter((c) => c.type === 'lower' || c.type === 'tall')
-        .findIndex((c) => c === model)}
-      {@const xOffset = calculatePositionsX(cabinets, 'lower')[positionIndex]}
+    {#if $cabinets?.cabinets}
+      {#each $cabinets.cabinets.filter((c: GenericModelProps) => c.type === 'lower' || c.type === 'tall') as model, index}
+        {@const positionIndex = $cabinets.cabinets
+          .filter((c: GenericModelProps) => c.type === 'lower' || c.type === 'tall')
+          .findIndex((c) => c === model)}
+        {@const xOffset = calculatePositionsX($cabinets.cabinets, 'lower')[positionIndex]}
 
-      <GenericModel {model} position={{ x: xOffset, y: 0, z: 0 }} />
-    {/each}
+        <GenericModel {model} position={{ x: xOffset, y: 0, z: 0 }} />
+      {/each}
+    {/if}
 
     <!-- Столешница -->
     {#await Promise.all( [countertopTexture, countertopTextureStone] ) then [countertopMap, countertopMapStone]}
@@ -283,15 +172,17 @@
 
   <!-- Верхние шкафы -->
   <T.Group position.x={-totalWidthOfUpperCabinets / 2}>
-    {#each cabinets.filter((c) => c.type === 'upper') as model, index}
-      {@const positionIndex = cabinets
-        .filter((c) => c.type === 'upper')
-        .findIndex((c) => c === model)}
-      {@const xOffset = calculatePositionsX(cabinets, 'upper')[positionIndex]}
-      {@const yOffset = calculateUpperCabinetPosition(cabinets)}
-      {@const zOffset = calculateUpperCabinetZOffset(cabinets)}
+    {#if $cabinets?.cabinets}
+      {#each $cabinets.cabinets.filter((c: GenericModelProps) => c.type === 'upper') as model, index}
+        {@const positionIndex = $cabinets.cabinets
+          .filter((c: GenericModelProps) => c.type === 'upper')
+          .findIndex((c) => c === model)}
+        {@const xOffset = calculatePositionsX($cabinets.cabinets, 'upper')[positionIndex]}
+        {@const yOffset = calculateUpperCabinetPositionValue}
+        {@const zOffset = calculateUpperCabinetZOffsetValue}
 
-      <GenericModel {model} position={{ x: xOffset, y: yOffset, z: zOffset }} />
-    {/each}
+        <GenericModel {model} position={{ x: xOffset, y: yOffset, z: zOffset }} />
+      {/each}
+    {/if}
   </T.Group>
 </T.Group>

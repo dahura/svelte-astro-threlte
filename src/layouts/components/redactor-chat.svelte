@@ -5,6 +5,8 @@
   import { Card } from '$lib/components/ui/card'
   import { fade } from 'svelte/transition'
   import { Bot } from 'lucide-svelte'
+  import { generateGenericModel } from '$/agent/agent'
+  import { modelCabinetsStore } from '$/stores/redactor/cabinets-store'
 
   let chatInput = $state('')
   let chatHistory = $state<{ role: 'user' | 'assistant'; content: string; isTyping?: boolean }[]>(
@@ -40,8 +42,20 @@
 
       chatHistory = [...chatHistory, { role: 'user', content: userMessage }]
 
-      const aiResponse = `I understand you're asking about "${userMessage}". Let me help you with that...`
-      await simulateTyping(aiResponse)
+      try {
+        // Generate the kitchen model using the agent
+        const generatedCabinets = await generateGenericModel(userMessage)
+
+        // Update the store with the new cabinets
+        modelCabinetsStore.set({ cabinets: generatedCabinets })
+
+        const aiResponse = `I've created a kitchen design based on your request. The model has been updated in the editor.`
+        await simulateTyping(aiResponse)
+      } catch (error) {
+        console.error('Error generating kitchen model:', error)
+        const aiResponse = `Sorry, I encountered an error while processing your request. Please try again.`
+        await simulateTyping(aiResponse)
+      }
     }
   }
 
@@ -53,20 +67,20 @@
 </script>
 
 <div
-  class="fixed bottom-0 left-0 right-0 z-10 pl-16 border-t border-border bg-card h-80"
+  class="fixed right-0 bottom-0 left-0 z-10 pl-16 h-80 border-t border-border bg-card"
   transition:fade={{ duration: 150 }}
 >
-  <div class="flex flex-col h-full p-4">
+  <div class="flex flex-col p-4 h-full">
     <!-- Chat History -->
     <ScrollArea class="flex-1">
       <div class="space-y-4">
         {#each chatHistory as message}
           <div transition:fade={{ duration: 150 }} class="transition-all duration-200 ease-in-out">
             <Card class="p-3 transition-shadow duration-200 hover:shadow-md">
-              <div class="flex items-start gap-3">
+              <div class="flex gap-3 items-start">
                 {#if message.role === 'assistant'}
                   <div
-                    class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 shrink-0"
+                    class="flex justify-center items-center w-8 h-8 rounded-full bg-primary/10 shrink-0"
                   >
                     <Bot class="w-5 h-5 text-primary" />
                   </div>
@@ -74,10 +88,10 @@
                     <div class="mb-1 text-sm font-semibold text-primary">AI Assistant</div>
                     <div class="text-sm text-foreground/90">
                       {#if message.isTyping}
-                        <div class="flex items-center h-6 gap-1">
+                        <div class="flex gap-1 items-center h-6">
                           {#each [0, 1, 2] as i}
                             <span
-                              class="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce"
+                              class="w-1.5 h-1.5 rounded-full animate-bounce bg-primary/60"
                               style="animation-delay: {i * 0.2}s"
                             ></span>
                           {/each}
@@ -89,7 +103,7 @@
                   </div>
                 {:else}
                   <div
-                    class="flex items-center justify-center w-8 h-8 rounded-full bg-secondary/10 text-secondary shrink-0"
+                    class="flex justify-center items-center w-8 h-8 rounded-full bg-secondary/10 text-secondary shrink-0"
                   >
                     <span class="text-sm font-semibold">Y</span>
                   </div>
@@ -117,7 +131,7 @@
       <Button
         onclick={handleSendMessage}
         disabled={isWaitingForResponse}
-        class="w-32 px-8 transition-all duration-200"
+        class="px-8 w-32 transition-all duration-200"
       >
         Send
       </Button>
