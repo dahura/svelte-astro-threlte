@@ -1,13 +1,14 @@
 import { generateObject } from 'ai';
 import { z } from 'zod';
+import {openai} from '@ai-sdk/openai'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 
 
-const OPENROUTER_API_KEY = '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'
 
-const openrouter = createOpenRouter({
-    apiKey: OPENROUTER_API_KEY,
-  });
+
+// const openrouter = createOpenRouter({
+//     apiKey: OPENROUTER_API_KEY,
+//   });
 
 // Zod schema that matches the GenericModel interface
 const genericModelSchema = z.object({
@@ -87,7 +88,7 @@ const kitchenConfigSchema = z.object({
 
 const generateGenericModel = async ( prompt: string) => {
  const { object } = await generateObject({
-   model: openrouter.chat('x-ai/grok-4-fast:free'),
+   model: openai('gpt-5-mini'),
    system: `You are a kitchen design assistant. Based on the user's request, generate a detailed kitchen configuration including cabinets, textures, and colors. The user will provide a description of the kitchen they want, and you need to return a JSON object with the appropriate configuration.
 
    ## Cabinet Types and Characteristics
