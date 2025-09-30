@@ -30,7 +30,7 @@ export var modelTextureStore = textureStore('model-texture')
 
  export var setTexture = (textureName: TextureName) => {
  
-    
+     
     modelTextureStore.update((state) => ({
         ...state,
         currentTexture: {
@@ -46,9 +46,4 @@ export var getTexture = () => {
     return texture
 }
 
-
-
-
-
-
-
+export type { TextureName };

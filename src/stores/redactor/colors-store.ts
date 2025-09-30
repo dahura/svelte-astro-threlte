@@ -3,12 +3,12 @@ import { createStoreFactory } from "../create-store-factory.svelte";
 
 interface IColors {
   currentColor: Color;
-  availableColors: Color[]
+ availableColors: Color[]
 }
 
 const colorsStore = createStoreFactory<IColors>({
   currentColor: 'saddleBrown',
-  availableColors: Object.keys(COLORS) as Color[],
+ availableColors: Object.keys(COLORS) as Color[],
 })
 
 
@@ -24,6 +24,8 @@ export var setColor = (color: Color) => {
 export var getColor = () => {
   return modelColorsStore.get().currentColor
 }
+
+export type { Color };
 
 
 

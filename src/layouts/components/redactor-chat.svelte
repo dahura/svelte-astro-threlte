@@ -7,6 +7,8 @@
   import { Bot } from 'lucide-svelte'
   import { generateGenericModel } from '$/agent/agent'
   import { modelCabinetsStore } from '$/stores/redactor/cabinets-store'
+  import { modelTextureStore, setTexture, type TextureName } from '$/stores/redactor/texture-store'
+  import { modelColorsStore, setColor, type Color } from '$/stores/redactor/colors-store'
 
   let chatInput = $state('')
   let chatHistory = $state<{ role: 'user' | 'assistant'; content: string; isTyping?: boolean }[]>(
@@ -44,12 +46,39 @@
 
       try {
         // Generate the kitchen model using the agent
-        const generatedCabinets = await generateGenericModel(userMessage)
+        const generatedKitchenConfig = await generateGenericModel(userMessage)
 
-        // Update the store with the new cabinets
-        modelCabinetsStore.set({ cabinets: generatedCabinets })
+        // Update the stores with the new configuration
+        modelCabinetsStore.set({ cabinets: generatedKitchenConfig.cabinets })
 
-        const aiResponse = `I've created a kitchen design based on your request. The model has been updated in the editor.`
+        // Update texture and color stores if they exist in the response
+        if (generatedKitchenConfig.textures && generatedKitchenConfig.colors) {
+          // Update texture store
+          if (generatedKitchenConfig.textures.length > 0) {
+            const firstTexture = generatedKitchenConfig.textures[0]
+            // Validate that the texture name exists in our available textures
+            if (
+              firstTexture.name &&
+              modelTextureStore.get().availableTextures.includes(firstTexture.name as TextureName)
+            ) {
+              setTexture(firstTexture.name as TextureName)
+            }
+          }
+
+          // Update color store
+          if (generatedKitchenConfig.colors.length > 0) {
+            const firstColor = generatedKitchenConfig.colors[0]
+            // Validate that the color exists in our available colors
+            if (
+              firstColor.name &&
+              modelColorsStore.get().availableColors.includes(firstColor.name as Color)
+            ) {
+              setColor(firstColor.name as Color)
+            }
+          }
+        }
+
+        const aiResponse = `I've created a kitchen design based on your request. The model, textures, and colors have been updated in the editor.`
         await simulateTyping(aiResponse)
       } catch (error) {
         console.error('Error generating kitchen model:', error)

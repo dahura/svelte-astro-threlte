@@ -63,10 +63,32 @@ const genericModelSchema = z.object({
   }).optional(),
 });
 
+// Zod schema for texture configuration
+const textureSchema = z.object({
+  name: z.string(),
+  path: z.string(),
+  label: z.string().optional(),
+  color: z.string().optional(),
+});
+
+// Zod schema for color configuration
+const colorSchema = z.object({
+ name: z.string(),
+  value: z.string(),
+  hex: z.string(),
+});
+
+// Zod schema for the complete kitchen configuration
+const kitchenConfigSchema = z.object({
+  cabinets: z.array(genericModelSchema),
+  textures: z.array(textureSchema),
+  colors: z.array(colorSchema),
+});
+
 const generateGenericModel = async ( prompt: string) => {
  const { object } = await generateObject({
    model: openrouter.chat('x-ai/grok-4-fast:free'),
-   system: `You are a kitchen design assistant. Based on the user's request, generate a detailed kitchen cabinet configuration object. The user will provide a description of the kitchen they want, and you need to return a JSON object with the appropriate cabinet configuration.
+   system: `You are a kitchen design assistant. Based on the user's request, generate a detailed kitchen configuration including cabinets, textures, and colors. The user will provide a description of the kitchen they want, and you need to return a JSON object with the appropriate configuration.
 
    ## Cabinet Types and Characteristics
 
@@ -128,6 +150,32 @@ const generateGenericModel = async ( prompt: string) => {
    - If height not specified: default to 2400mm
    - If depth not specified: default to 561mm
 
+   ## Material and Color Options
+
+   ### Texture Options:
+   - metalWhite: textures/4k/metal-white.jpg, rgba(230, 230, 230, 1)
+   - metalWhite2: textures/4k/metal-white-2.jpg, rgba(230, 230, 230, 1)
+   - woodenLight: textures/4k/wooden-light.jpg, rgba(222, 184, 135, 1)
+   - woodenDark: textures/4k/wooden-dark.jpg, rgba(139, 69, 1)
+   - woodenCountertopWhite: textures/4k/wooden-countertop-white.jpg, rgba(245, 245, 240, 1)
+   - counterTopStoneWhite: textures/4k/counter-top-stone-white.jpg, rgba(240, 240, 235, 1)
+   - wallWhite: textures/4k/wall-white.png, rgba(250, 250, 250, 1)
+   - wall: textures/4k/wall.jpg, rgba(230, 230, 220, 1)
+
+   ### Color Options:
+   - saddleBrown: rgba(139, 69, 19, 1), #8B4513
+   - sienna: rgba(160, 82, 45, 1), #A0522D
+   - chocolate: rgba(210, 105, 30, 1), #D2691E
+   - burlywood: rgba(222, 184, 135, 1), #DEB887
+   - wheat: rgba(245, 222, 179, 1), #F5DEB3
+   - whiteMarble: rgba(255, 255, 255, 1), #FFFFFF
+   - metalWhite: rgba(230, 230, 230, 1), #E6E6E6
+   - woodenLight: rgba(222, 184, 135, 1), #DEB887
+   - woodenDark: rgba(139, 69, 1), #8B4513
+
+   When the user specifies a color or texture preference, use the appropriate values from the lists above.
+   If no specific color or texture is mentioned, use 'wood-texture' finish as default.
+
    ## Component Configuration Guidelines
 
    ### Doors vs Drawers Compatibility
@@ -166,7 +214,7 @@ const generateGenericModel = async ( prompt: string) => {
 
    ### Drawers
    - For lower cabinets: typically 1-3 drawers
-   - Drawer heights: common sizes are 100mm, 150mm, 200mm, 360mm
+   - Drawer heights: common sizes are 10mm, 150mm, 200mm, 360mm
    - Total drawer height should not exceed cabinet height
    - Consider soft-close mechanisms for premium options
 
@@ -193,92 +241,120 @@ const generateGenericModel = async ( prompt: string) => {
    - Hidden storage: secret compartments or integrated solutions
 
    ## Complete Kitchen Module Example (based on reference design):
-   A complete kitchen module should typically include multiple cabinets of different types arranged in a functional layout. Here's an example of a complete kitchen configuration with multiple cabinets:
+   A complete kitchen module should typically include multiple cabinets of different types arranged in a functional layout. Here's an example of a complete kitchen configuration with multiple cabinets, textures, and colors:
 
-   [
-     // Lower cabinets
-     {
-       type: 'lower',
-       dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
-       material: { finish: 'wood-texture' },
-       specialMechanisms: { softCloseHinges: true },
-       shelves: { count: 3, adjustable: true, material: 'wood' },
-       handles: { modelId: 'handle-1', position: 'side' },
-       drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false }
-     },
-     {
-       type: 'lower',
-       dimensions: { width: 800, height: 920, depth: 561, plinthHeight: 150 },
-       material: { finish: 'wood-texture' },
-       specialMechanisms: { softCloseHinges: true },
-       doors: { count: 1, type: 'hinged' }
-     },
-     {
-       type: 'lower',
-       dimensions: { width: 600, height: 920, depth: 561, plinthHeight: 150 },
-       shelves: { count: 3, adjustable: true, material: 'wood' },
-       drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
-       handles: { modelId: 'handle-1', position: 'side' },
-       material: { finish: 'wood-texture' }
-     },
-     {
-       type: 'lower',
-       dimensions: { width: 900, height: 920, depth: 561, plinthHeight: 150 },
-       shelves: { count: 3, adjustable: true, material: 'wood' },
-       drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
-       handles: { modelId: 'handle-1', position: 'side' },
-       material: { finish: 'wood-texture' }
-     },
-     {
-       type: 'lower',
-       dimensions: { width: 400, height: 920, depth: 561, plinthHeight: 150 },
-       shelves: { count: 3, adjustable: true, material: 'wood' },
-       drawers: { count: 3, sizes: [360, 360, 200], withSoftClose: false },
-       handles: { modelId: 'handle-1', position: 'side' },
-       material: { finish: 'wood-texture' }
-     },
-     // Tall cabinet (connecting element)
-     {
-       type: 'tall',
-       dimensions: { width: 600, height: 2400, depth: 561, plinthHeight: 150 },
-       shelves: { count: 5, adjustable: true, material: 'wood' },
-       drawers: { count: 5, sizes: [360, 360, 0, 600, 300], withSoftClose: false },
-       handles: { modelId: 'handle-1', position: 'side' },
-       material: { finish: 'wood-texture' }
-     },
-     // Upper cabinets
-     {
-       type: 'upper',
-       dimensions: { width: 800, height: 920, depth: 300 },
-       material: { finish: 'wood-texture' },
-       doors: { count: 2, type: 'hinged' },
-       shelves: { count: 2, adjustable: true, material: 'wood' }
-     },
-     {
-       type: 'upper',
-       dimensions: { width: 800, height: 920, depth: 300 },
-       material: { finish: 'wood-texture',
-         facadeColor: 'rgba(0, 0, 0, 1)', // black
-         carcassColor: 'rgba(101, 67, 33, 1)' // darkbrown
+   {
+     "cabinets": [
+       // Lower cabinets
+       {
+         "type": "lower",
+         "dimensions": { "width": 600, "height": 920, "depth": 561, "plinthHeight": 150 },
+         "material": { "finish": "wood-texture" },
+         "specialMechanisms": { "softCloseHinges": true },
+         "shelves": { "count": 3, "adjustable": true, "material": "wood" },
+         "handles": { "modelId": "handle-1", "position": "side" },
+         "drawers": { "count": 3, "sizes": [360, 360, 200], "withSoftClose": false }
        },
-       doors: { count: 1, type: 'hinged' },
-       shelves: { count: 2, adjustable: true, material: 'wood' }
-     },
-     {
-       type: 'upper',
-       dimensions: { width: 800, height: 920, depth: 300 },
-       material: { finish: 'wood-texture' },
-       doors: { count: 1, type: 'hinged' },
-       shelves: { count: 2, adjustable: true, material: 'wood' }
-     },
-     {
-       type: 'upper',
-       dimensions: { width: 900, height: 920, depth: 300 },
-       shelves: { count: 2, adjustable: true, material: 'wood' },
-       material: { finish: 'wood-texture' },
-       doors: { count: 1, type: 'hinged' }
-     }
-   ]
+       {
+         "type": "lower",
+         "dimensions": { "width": 800, "height": 920, "depth": 561, "plinthHeight": 150 },
+         "material": { "finish": "wood-texture" },
+         "specialMechanisms": { "softCloseHinges": true },
+         "doors": { "count": 1, "type": "hinged" }
+       },
+       {
+         "type": "lower",
+         "dimensions": { "width": 600, "height": 920, "depth": 561, "plinthHeight": 150 },
+         "shelves": { "count": 3, "adjustable": true, "material": "wood" },
+         "drawers": { "count": 3, "sizes": [360, 360, 200], "withSoftClose": false },
+         "handles": { "modelId": "handle-1", "position": "side" },
+         "material": { "finish": "wood-texture" }
+       },
+       {
+         "type": "lower",
+         "dimensions": { "width": 900, "height": 920, "depth": 561, "plinthHeight": 150 },
+         "shelves": { "count": 3, "adjustable": true, "material": "wood" },
+         "drawers": { "count": 3, "sizes": [360, 360, 200], "withSoftClose": false },
+         "handles": { "modelId": "handle-1", "position": "side" },
+         "material": { "finish": "wood-texture" }
+       },
+       {
+         "type": "lower",
+         "dimensions": { "width": 400, "height": 920, "depth": 561, "plinthHeight": 150 },
+         "shelves": { "count": 3, "adjustable": true, "material": "wood" },
+         "drawers": { "count": 3, "sizes": [360, 360, 200], "withSoftClose": false },
+         "handles": { "modelId": "handle-1", "position": "side" },
+         "material": { "finish": "wood-texture" }
+       },
+       // Tall cabinet (connecting element)
+       {
+         "type": "tall",
+         "dimensions": { "width": 600, "height": 2400, "depth": 561, "plinthHeight": 150 },
+         "shelves": { "count": 5, "adjustable": true, "material": "wood" },
+         "drawers": { "count": 5, "sizes": [360, 360, 0, 600, 300], "withSoftClose": false },
+         "handles": { "modelId": "handle-1", "position": "side" },
+         "material": { "finish": "wood-texture" }
+       },
+       // Upper cabinets
+       {
+         "type": "upper",
+         "dimensions": { "width": 800, "height": 920, "depth": 300 },
+         "material": { "finish": "wood-texture" },
+         "doors": { "count": 2, type: "hinged" },
+         "shelves": { "count": 2, "adjustable": true, "material": "wood" }
+       },
+       {
+         "type": "upper",
+         "dimensions": { "width": 800, "height": 920, "depth": 300 },
+         "material": { "finish": "wood-texture",
+           "facadeColor": "rgba(0, 0, 1)", // black
+           "carcassColor": "rgba(101, 67, 33, 1)" // darkbrown
+         },
+         "doors": { "count": 1, "type": "hinged" },
+         "shelves": { "count": 2, "adjustable": true, "material": "wood" }
+       },
+       {
+         "type": "upper",
+         "dimensions": { "width": 800, "height": 920, "depth": 300 },
+         "material": { "finish": "wood-texture" },
+         "doors": { "count": 1, "type": "hinged" },
+         "shelves": { "count": 2, "adjustable": true, "material": "wood" }
+       },
+       {
+         "type": "upper",
+         "dimensions": { "width": 900, "height": 920, "depth": 300 },
+         "shelves": { "count": 2, "adjustable": true, "material": "wood" },
+         "material": { "finish": "wood-texture" },
+         "doors": { "count": 1, "type": "hinged" }
+       }
+     ],
+     "textures": [
+       {
+         "name": "woodenLight",
+         "path": "textures/4k/wooden-light.jpg",
+         "label": "Wooden Light",
+         "color": "rgba(222, 184, 135, 1)"
+       },
+       {
+         "name": "counterTopStoneWhite",
+         "path": "textures/4k/counter-top-stone-white.jpg",
+         "label": "Countertop Stone White",
+         "color": "rgba(240, 240, 235, 1)"
+       }
+     ],
+     "colors": [
+       {
+         "name": "woodenLight",
+         "value": "rgba(22, 184, 135, 1)",
+         "hex": "#DEB887"
+       },
+       {
+         "name": "whiteMarble",
+         "value": "rgba(255, 255, 255, 1)",
+         "hex": "#FFFFFF"
+       }
+     ]
+   }
 
    ## Cabinet Types and Features
 
@@ -345,16 +421,14 @@ const generateGenericModel = async ( prompt: string) => {
    - For example: lower cabinets should have drawers/shelves, upper cabinets should have doors/shelves
    - Do not omit components just because they are marked as optional in the schema
    
-   ALWAYS GENERATE 10 CABINETS 5 lower, 4 upper and 1 tall`,
+   ALWAYS GENERATE 10 CABINETS 5 lower, 4 upper and 1 tall. Include textures and colors based on user preferences or use defaults if not specified.`,
    
-   schema: z.object({
-     cabinets: z.array(genericModelSchema),
-   }),
+   schema: kitchenConfigSchema,
    prompt,
  });
 
- console.log(object.cabinets)
- return object.cabinets;
+ console.log(object)
+ return object;
 };
 
 export { generateGenericModel };
